@@ -22,11 +22,8 @@ from elasticsearch_dsl import Search, Q
 
 import pandas as pd
 
-DATA_LOCATION = 'data'
-DATA_LOCATION = os.environ['TDATIM_DATA'] if 'TDATIM_DATA' in os.environ else '/data'
-DATA_CATEGORIES = os.environ['TDATIM_CATEGORIES'] if 'TDATIM_CATEGORIES' in os.environ else f'{DATA_LOCATION}/dtcats.LANG.md'
 THRESHOLD = 0.1
-weighting = {
+WEIGHTING = {
     'C': 2,
     'SC': 2,
     'SSC': 1,
@@ -80,9 +77,7 @@ def make_category_manager():
     return category_manager
 
 
-def get_cat_bow(cat):
-    return classifier_bow_vec[cat]
-def closest(text, cat):
+def closest(text, cat, cm, classifier_bow_vec):
     word_list = set(sum(cm.strip_document(text), []))
     word_scores = [
         (word,
@@ -91,7 +86,7 @@ def closest(text, cat):
                     cm._model[word] / np.abs(cm._model[word]),
                     v / np.abs(v)
                 )
-                for v in get_cat_bow(cat)
+                for v in classifier_bow_vec[cat]
             ]).mean()
 
             # TODO: double check model.embedding_similarities(
@@ -106,18 +101,28 @@ def closest(text, cat):
         if score > 0.5
     ]
 
-def get_datasets():
-   #results_df = pd.DataFrame((d.to_dict() for d in s.scan()))
-   # /businesseconomy../business/activitiespeopel/123745
-   for hit in s.scan():
-       try:
-           datasets[hit.description.title] = {
-               'category': tuple(hit.uri.split('/')[1:4]),
-               'text': f'{hit.description.title} {hit.description.metaDescription}'
-           }
-           datasets[hit.description.title]['bow'] = closest(datasets[hit.description.title]['text'], datasets[hit.description.title]['category'])
-       except AttributeError as e:
-           pass
+def get_datasets(cm, classifier_bow):
+    classifier_bow_vec = {
+        k: [cm._model[w[1]] for w in words]
+        for k, words in classifier_bow.items()
+    }
+    datasets = {}
+    #results_df = pd.DataFrame((d.to_dict() for d in s.scan()))
+    # /businesseconomy../business/activitiespeopel/123745
+    client = Elasticsearch(['http://localhost:9200'])
+
+    s = Search(using=client, index="ons1639492069322") \
+            .filter('bool', must=[Q('exists', field="description.title")])
+    for hit in s.scan():
+        try:
+            datasets[hit.description.title] = {
+                'category': tuple(hit.uri.split('/')[1:4]),
+                'text': f'{hit.description.title} {hit.description.metaDescription}'
+            }
+            datasets[hit.description.title]['bow'] = closest(datasets[hit.description.title]['text'], datasets[hit.description.title]['category'], cm, classifier_bow_vec)
+        except AttributeError as e:
+            pass
+    return datasets
 
 class CategoryManager:
     _stop_words = None
@@ -130,7 +135,7 @@ class CategoryManager:
 
     def add_categories_from_bow(self, name, classifier_bow):
         topic_vectors = [
-            (np.mean([weighting[code] * self._model[w] for code, w in l], axis=0), [w for _, w in l]) for k, l in classifier_bow.items()
+            (np.mean([WEIGHTING[code] * self._model[w] for code, w in l], axis=0), [w for _, w in l]) for k, l in classifier_bow.items()
         ]
         self._categories[name] = (classifier_bow, topic_vectors)
 
@@ -201,7 +206,7 @@ def get_taxonomy():
         taxonomy = json.load(f)
     return taxonomy
 
-def taxonomy_to_categories():
+def taxonomy_to_categories(taxonomy):
     child_topics = sum([topic['child_topics'] for topic in taxonomy['topics']], [])
     categories = {
         (topic['filterable_title'], topic['title']): {
@@ -213,6 +218,7 @@ def taxonomy_to_categories():
         }
         for topic in taxonomy['topics']
     }
+    return categories
 
 def run():
     model = FfModel('test_data/wiki.en.fifu')
@@ -228,7 +234,7 @@ def run():
     cm._stop_words = stopwords.words('english')
 
     taxonomy = get_taxonomy()
-    categories = taxonomy_to_categories()
+    categories = taxonomy_to_categories(taxonomy)
 
     classifier_categories = {
         catf: {
@@ -259,21 +265,7 @@ def run():
     ] for k, c_dict in classifier_categories.items()], []))
     classifier_bow
 
-    c = Counter()
-    c.update(['a'])
-    c.update(['a'])
-    [n for k, n in c.items()]
-
-    client = Elasticsearch(['http://localhost:9200'])
-
-    s = Search(using=client, index="ons1639492069322") \
-            .filter('bool', must=[Q('exists', field="description.title")])
-    datasets = {}
-    classifier_bow_vec = {
-        k: [cm._model[w[1]] for w in words]
-        for k, words in classifier_bow.items()
-    }
-    datasets = get_datasets()
+    datasets = get_datasets(cm, classifier_bow)
 
     discover_terms(datasets, classifier_bow)
 
@@ -289,5 +281,7 @@ def run():
 if __name__ == "__main__":
     cm = run()
     while True:
-        word = input()
-        print(cm.test(word.strip(), 'onyxcats'))
+        word = input("Sentence? ")
+        categories = cm.test(word.strip(), 'onyxcats')
+        categories = ['->'.join(c[1]) for c in categories if c[0] > 0.3][:5]
+        print('\n'.join(categories))
