@@ -1,2 +1,4 @@
 /target
 ff_fasttext/*.so
+__pycache__
+*.egg-info

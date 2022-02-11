@@ -1,5 +1,7 @@
 use std::fs::File;
 use std::io::BufReader;
+use numpy::{IntoPyArray, PyArray, PyReadonlyArrayDyn};
+use numpy::ndarray::Ix1;
 
 use finalfusion::prelude::*;
 use pyo3::prelude::*;
@@ -17,6 +19,38 @@ impl FfModel {
         FfModel {
             embeddings: Embeddings::mmap_embeddings(&mut BufReader::new(f)).unwrap()
         }
+    }
+
+    fn get_dims(
+        self_: PyRef<Self>
+    ) -> usize {
+        self_.embeddings.dims()
+    }
+
+    fn load_embedding(
+        self_: PyRef<Self>,
+        sentence: &str,
+        mut a: &PyArray<f32, Ix1>
+    ) -> bool {
+        let mut success: bool;
+        unsafe {
+            let arr = a.as_array_mut();
+            success = self_.embeddings.embedding_into(
+                sentence,
+                arr
+            );
+        }
+        success
+    }
+
+    fn embedding_similarities(
+        self_: PyRef<Self>,
+        x: PyReadonlyArrayDyn<f32>,
+        y: PyReadonlyArrayDyn<f32>
+    ) -> f32 {
+        let py = self_.py();
+        let X = x.as_array();
+        X.sum() / (X.len() as f32)
     }
 
     fn eval(self_: PyRef<Self>, haystack: &str) -> PyResult<()> {

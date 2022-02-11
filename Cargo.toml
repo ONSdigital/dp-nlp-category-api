@@ -11,3 +11,4 @@ crate-type = ["cdylib"]
 [dependencies]
 finalfusion = "0.17"
 pyo3 = { version = "0.15.1", features = ["extension-module"] }
+numpy = "0.15"
