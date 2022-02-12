@@ -33,3 +33,4 @@ build:
   - docker tag $CONTAINER_IMAGE $CONTAINER_TAG_IMAGE && docker push $CONTAINER_TAG_IMAGE
   only:
     - main
+    - feature/141-link-rust-and-python # temporary for testing CI
