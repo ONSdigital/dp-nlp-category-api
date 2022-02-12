@@ -1,8 +1,10 @@
 setuptools_rust~=1.0.0
 pip>=21.3
-gensim
 nltk
 sortedcontainers
 elasticsearch2
 elasticsearch_dsl
-pandas
+click
+fastapi
+pydantic
+uvicorn

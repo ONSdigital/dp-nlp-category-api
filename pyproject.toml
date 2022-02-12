@@ -1,11 +1,30 @@
 [tool.poetry]
 name = "ff_fasttext_poc"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = [
+    "Chris Nixon <chris.nixon@flaxandteal.co.uk>",
+    "Phil Weir <phil.weir@flaxandteal.co.uk>",
+    "Kanika Miglani <kanika.miglani@flaxandteal.co.uk>"
+]
+packages = [
+    { include = "ff_fasttext" },
+    { include = "ff_fasttext/scripts" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+nltk = "^3.7"
+sortedcontainers = "^2.4.0"
+elasticsearch2 = "^2.5.1"
+elasticsearch-dsl = "2"
+click = "^8.0.3"
+fastapi = "^0.73.0"
+pydantic = "^1.9.0"
+uvicorn = "^0.17.4"
+
+[tool.poetry.scripts]
+ff_fasttext_cli = "ff_fasttext.scripts.ff_fasttext:main"
 
 [tool.poetry.dev-dependencies]
 
