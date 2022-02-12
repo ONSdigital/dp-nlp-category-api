@@ -20,6 +20,7 @@ stages:
 # Build the whole stack using only the faas-cli
 build:
   stage: build
+  image: docker
   script:
   - docker build -f Dockerfile -t $CONTAINER_IMAGE .
   - docker push $CONTAINER_IMAGE
