@@ -1,4 +1,4 @@
-FROM rust:bullseye as rust_build
+FROM rust:buster as rust_build
 
 RUN mkdir -p /app/build/ff_fasttext
 RUN mkdir -p /app/build/test_data
@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements-dev.txt
 
 RUN python3 setup.py develop
 
-FROM python:3-bullseye
+FROM python:3.9-buster
 
 RUN mkdir -p /app/ff_fasttext
 
