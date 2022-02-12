@@ -1,9 +1,9 @@
-FROM rust as rust_build
+FROM rust:bullseye as rust_build
 
 RUN mkdir -p /app/build/ff_fasttext
 RUN mkdir -p /app/build/test_data
 WORKDIR /app/build/test_data
-RUN curl -L -O "http://www.sfs.uni-tuebingen.de/a3-public-data/finalfusion-fasttext/wiki/wiki.en.fifu"
+# RUN curl -L -O "...wiki/wiki.en.fifu"
 WORKDIR /app/build
 
 COPY Cargo.lock /app/build

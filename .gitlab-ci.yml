@@ -16,17 +16,10 @@ before_script:
 
 stages:
   - build
-  - deploy
-
-# Cache the templates and build-context to speed things up
-cache:
-  key: ${CI_COMMIT_REF_SLUG} # i.e. master
-  paths:
-  - ./faas-cli
-  - ./template
 
 # Build the whole stack using only the faas-cli
 build:
+  stage: build
   script:
   - docker build -f Dockerfile -t $CONTAINER_IMAGE .
   - docker push $CONTAINER_IMAGE
