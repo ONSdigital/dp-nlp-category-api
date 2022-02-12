@@ -8,8 +8,6 @@ import numpy as np
 
 import json
 
-from .extract import append_discovered_terms_from_elasticsearch
-
 def get_taxonomy():
     with open('taxonomy.json', 'r') as f:
         taxonomy = json.load(f)

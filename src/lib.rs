@@ -43,16 +43,6 @@ impl FfModel {
         success
     }
 
-    fn embedding_similarities(
-        self_: PyRef<Self>,
-        x: PyReadonlyArrayDyn<f32>,
-        y: PyReadonlyArrayDyn<f32>
-    ) -> f32 {
-        let py = self_.py();
-        let X = x.as_array();
-        X.sum() / (X.len() as f32)
-    }
-
     fn eval(self_: PyRef<Self>, haystack: &str) -> PyResult<()> {
         if let Some(embedding) = self_.embeddings.embedding(haystack) {
              println!("{:#?}", embedding);

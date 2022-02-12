@@ -1,16 +1,17 @@
-from fastapi import FastApi
+import logging
+from fastapi import FastAPI
 from .extract import load
 
 THRESHOLD = 0.4
 
 def make_app(category_manager):
-    app = FastApi()
+    app = FastAPI()
 
     @app.get('/categories')
     def get_categories(query: str):
         categories = category_manager.test(query.strip(), 'onyxcats')
         return [
-            c for c in categories if c[1] > THRESHOLD
+            [float(c[0]), list(c[1])] for c in categories if c[0] > THRESHOLD
         ]
 
     return app
