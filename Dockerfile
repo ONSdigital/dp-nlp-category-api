@@ -1,52 +1,83 @@
-FROM rust:buster as rust_build
+# https://github.com/python-poetry/poetry/discussions/1879
+# to improve ^^
+
+## STAGE 1 - Core package(s)
+
+# https://github.com/python-poetry/poetry/discussions/1879
+# to improve ^^
+
+## STAGE 1 - Core package(s)
+
+FROM konstin2/maturin as maturin
 
 RUN mkdir -p /app/build/ff_fasttext
-RUN mkdir -p /app/build/test_data
 WORKDIR /app/build/test_data
 # RUN curl -L -O "...wiki/wiki.en.fifu"
 WORKDIR /app/build
 
-COPY Cargo.lock /app/build
-COPY Cargo.toml /app/build
+RUN yum install -y lapack-devel atlas-devel
 
-RUN apt-get update && apt-get install -y python3-pip liblapack-dev libatlas-base-dev
+COPY core/Cargo.lock /app/build
+COPY core/Cargo.toml /app/build
+COPY core/LICENSE.md /app/build
 
-RUN RUSTFLAGS="-C link-args=-lcblas -llapack" cargo install finalfusion-utils --features=opq
+RUN RUSTFLAGS="-L /usr/lib64/atlas -C link-args=-lcblas -llapack" cargo install finalfusion-utils --features=opq
 
-COPY setup.py /app/build
-COPY setup.cfg /app/build
-COPY pyproject.toml /app/build
-COPY poetry.lock /app/build
-COPY requirements-dev.txt /app/build
-COPY src /app/build/src
-COPY ff_fasttext/__init__.py /app/build/ff_fasttext
+COPY core/pyproject.toml /app/build
+COPY core/src /app/build/src
+COPY core/ff_fasttext /app/build/ff_fasttext
 
 WORKDIR /app/build
 
-RUN pip install --no-cache-dir --upgrade -r requirements-dev.txt
+RUN maturin build
 
-RUN python3 setup.py develop
+## STAGE 2 - API
 
-FROM python:3.9-buster
+FROM python:3.9
 
 RUN mkdir -p /app/ff_fasttext
 
-COPY --from=rust_build /app/build/ff_fasttext/_ff_fasttext.abi3.so /app/ff_fasttext
-COPY --from=rust_build /app/build/test_data /app/test_data
-
 RUN pip install poetry
-WORKDIR /app
 
-COPY setup.py /app
-COPY setup.cfg /app
-COPY pyproject.toml /app
-COPY poetry.lock /app
-COPY requirements-dev.txt /app
-COPY ff_fasttext /app/ff_fasttext
-# COPY taxonomy.json /app
+COPY --from=maturin /app/build/target/wheels/*cp39*.whl /app
 
 WORKDIR /app
+
+COPY api/pyproject.toml /app
+RUN sed -i "s/ff_fasttext # Replace with wheel.*/ff_fasttext = { \"file\" = \"$(ls -1 *.whl)\" }/" pyproject.toml
+
+COPY api/poetry.lock /app
+COPY api/ff_fasttext_api /app/ff_fasttext_api
 
 RUN poetry install
 
-CMD ["poetry", "run", "uvicorn", "ff_fasttext.server:app", "--host", "0.0.0.0", "--port", "80"]
+# We want to use poetry for consistency and because it is designed to reproducibly
+# manage Python - however the link at the top gives ways of doing this multistage,
+# which would be slightly nicer.
+CMD ["poetry", "run", "uvicorn", "ff_fasttext_api.server:app", "--host", "0.0.0.0", "--port", "80"]
+
+
+## STAGE 2 - API
+
+FROM python:3.9
+
+RUN mkdir -p /app/ff_fasttext
+
+RUN pip install poetry
+
+COPY --from=maturin /app/build/target/wheels/*cp39*.whl /app
+
+WORKDIR /app
+
+COPY api/pyproject.toml /app
+RUN sed -i "s/ff_fasttext # Replace with wheel.*/ff_fasttext = { \"file\" = \"$(ls -1 *.whl)\" }/" pyproject.toml
+
+COPY api/poetry.lock /app
+COPY api/ff_fasttext_api /app/ff_fasttext_api
+
+RUN poetry install
+
+# We want to use poetry for consistency and because it is designed to reproducibly
+# manage Python - however the link at the top gives ways of doing this multistage,
+# which would be slightly nicer.
+CMD ["poetry", "run", "uvicorn", "ff_fasttext_api.server:app", "--host", "0.0.0.0", "--port", "80"]

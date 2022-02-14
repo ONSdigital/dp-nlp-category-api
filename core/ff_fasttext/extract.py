@@ -4,7 +4,7 @@ from elasticsearch2 import Elasticsearch
 from elasticsearch_dsl import Search, Q
 from nltk import download
 
-from ._ff_fasttext import FfModel
+from .ff_fasttext import FfModel
 from .category_manager import CategoryManager
 from .taxonomy import get_taxonomy, taxonomy_to_categories, categories_to_classifier_bow
 

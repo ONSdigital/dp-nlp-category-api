@@ -1,0 +1,22 @@
+# Core package
+
+[project]
+name = "ff_fasttext"
+version = "0.0.1"
+description = "Created for ONS. Proof-of-concept mmap'd Rust word2vec implementation linked with category matching"
+license = { "file" = "LICENSE.md" }
+authors = [
+    { "name" = "Chris Nixon", "email" = "chris.nixon@flaxandteal.co.uk" },
+    { "name" = "Phil Weir", "email" = "phil.weir@flaxandteal.co.uk" }
+]
+dependencies = [
+    "nltk~=3.7",
+    "sortedcontainers~=2.4.0",
+    "elasticsearch2~=2.5.1",
+    "elasticsearch-dsl~=2.0",
+    "numpy"
+]
+
+[build-system]
+requires = ["maturin>=0.12,<0.13"]
+build-backend = "maturin"

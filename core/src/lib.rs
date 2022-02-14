@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::io::BufReader;
-use numpy::{IntoPyArray, PyArray, PyReadonlyArrayDyn};
+use numpy::PyArray;
 use numpy::ndarray::Ix1;
 
 use finalfusion::prelude::*;
@@ -30,9 +30,9 @@ impl FfModel {
     fn load_embedding(
         self_: PyRef<Self>,
         sentence: &str,
-        mut a: &PyArray<f32, Ix1>
+        a: &PyArray<f32, Ix1>
     ) -> bool {
-        let mut success: bool;
+        let success: bool;
         unsafe {
             let arr = a.as_array_mut();
             success = self_.embeddings.embedding_into(
@@ -52,7 +52,7 @@ impl FfModel {
 }
 
 #[pymodule]
-fn _ff_fasttext(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+fn ff_fasttext(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add_class::<FfModel>()?;
 
     Ok(())

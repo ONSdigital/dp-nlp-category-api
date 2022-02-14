@@ -1,0 +1,33 @@
+# API
+
+[tool.poetry]
+name = "ff_fasttext_api"
+version = "0.0.1"
+description = "Created for ONS. API/CLI wrapper for proof-of-concept mmap'd Rust word2vec implementation linked with category matching"
+license = "MIT"
+authors = [
+    "Phil Weir <phil.weir@flaxandteal.co.uk>",
+    "Kanika Miglani <kanika.miglani@flaxandteal.co.uk>"
+]
+packages = [
+    { include = "ff_fasttext_api" },
+    { include = "ff_fasttext_api/scripts" }
+]
+
+# For installable server
+[tool.poetry.dependencies]
+ff_fasttext # Replace with wheel when building in Docker
+click = "^8.0.3"
+fastapi = "0.52"
+pydantic = "^1.9.0"
+elasticsearch2 = "^2.5.1" # for some reason, this must be explicit
+uvicorn = "^0.17.4"
+
+[tool.poetry.scripts]
+ff_fasttext_cli = "ff_fasttext_api.scripts.ff_fasttext:main"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

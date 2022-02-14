@@ -1,5 +1,10 @@
 /target
-ff_fasttext/*.so
+/core/target
+/core/ff_fasttext/*.so
 __pycache__
 *.egg-info
 /taxonomy.json
+Dockerfile
+*.whl
+*.tar.gz
+.mypy_cache
