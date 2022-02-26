@@ -3,7 +3,9 @@
 variables:
   #CONTAINER_TAG_IMAGE: $CI_REGISTRY_IMAGE:build-$CI_BUILD_REF_NAME
   CONTAINER_IMAGE: $CI_REGISTRY_IMAGE:build-$CI_PIPELINE_ID
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  IMAGE_LATEST_TAG: $CI_REGISTRY_IMAGE:latest
+  IMAGE_SHA_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
   DOCKER_DRIVER: overlay
   DOCKER_HOST: tcp://localhost:2375/
 
@@ -22,9 +24,8 @@ build:
   stage: build
   image: docker
   script:
-  - docker build -f Dockerfile -t $CONTAINER_IMAGE .
-  - docker push $CONTAINER_IMAGE
-  - docker tag $CONTAINER_IMAGE $CONTAINER_RELEASE_IMAGE && docker push $CONTAINER_RELEASE_IMAGE
+  - docker build -t $CONTAINER_IMAGE -t $IMAGE_LATEST_TAG -t $IMAGE_SHA_TAG .
+  - docker image push --all-tags $CI_REGISTRY_IMAGE
   only:
     - main
     - feature/141-link-rust-and-python # temporary for testing CI

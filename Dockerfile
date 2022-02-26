@@ -80,4 +80,4 @@ RUN poetry install
 # We want to use poetry for consistency and because it is designed to reproducibly
 # manage Python - however the link at the top gives ways of doing this multistage,
 # which would be slightly nicer.
-CMD ["poetry", "run", "uvicorn", "ff_fasttext_api.server:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["poetry", "run", "uvicorn", "ff_fasttext_api.server:app", "--host", "0.0.0.0", "--port", "3003"]

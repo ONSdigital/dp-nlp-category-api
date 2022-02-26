@@ -8,3 +8,4 @@ Dockerfile
 *.whl
 *.tar.gz
 .mypy_cache
+.idea
