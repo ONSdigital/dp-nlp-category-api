@@ -6,5 +6,5 @@ services:
     #  - "8000:80"
     network_mode: host
     volumes:
-      - ./taxonomy.json:/app/taxonomy.json
+      - ./taxonomy.json:/app/test_data/taxonomy.json
       - ./test_data:/app/test_data

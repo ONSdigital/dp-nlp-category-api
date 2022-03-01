@@ -9,7 +9,7 @@ import numpy as np
 import json
 
 def get_taxonomy():
-    with open('taxonomy.json', 'r') as f:
+    with open('/app/test_data/taxonomy.json', 'r') as f:
         taxonomy = json.load(f)
     return taxonomy
 

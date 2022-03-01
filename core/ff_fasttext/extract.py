@@ -10,7 +10,7 @@ from .taxonomy import get_taxonomy, taxonomy_to_categories, categories_to_classi
 
 APPEARANCE_THRESHOLD = 5
 UPPER_APPEARANCE_THRESHOLD = 10
-HOST = os.getenv('ELASTICSEARCH_HOST', 'http://localhost:9200')
+HOST = os.getenv('ELASTICSEARCH_HOST', 'http://elasticsearch-master:9200')
 ELASTICSEARCH_INDEX = os.getenv('ELASTICSEARCH_INDEX', 'ons1639492069322')
 
 def get_datasets(cm, classifier_bow):

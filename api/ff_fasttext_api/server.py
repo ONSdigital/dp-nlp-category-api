@@ -19,6 +19,10 @@ def make_app(category_manager):
             {'s': float(c[0]), 'c': list(c[1])} for c in categories if c[0] > THRESHOLD
         ]
 
+    @app.get('/health')
+    def health():
+        return 'OK'
+
     return app
 
 category_manager = load('test_data/wiki.en.fifu')
