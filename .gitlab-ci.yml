@@ -28,5 +28,3 @@ build:
   - docker image push --all-tags $CI_REGISTRY_IMAGE
   only:
     - main
-    - feature/141-link-rust-and-python # temporary for testing CI
-    - helm-experiments
