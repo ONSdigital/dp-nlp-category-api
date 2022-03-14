@@ -20,7 +20,7 @@ COPY --from=maturin /app/build/target/wheels/*cp39*.whl /app
 WORKDIR /app
 
 COPY api/pyproject.toml /app
-RUN sed -i "s/ff_fasttext # Replace with wheel.*/ff_fasttext = { \"file\" = \"$(ls -1 *.whl)\" }/" pyproject.toml
+RUN sed -i "s/# ff_fasttext.*/ff_fasttext = { \"file\" = \"$(ls -1 *.whl)\" }/" pyproject.toml
 
 COPY api/poetry.lock /app
 COPY api/ff_fasttext_api /app/ff_fasttext_api

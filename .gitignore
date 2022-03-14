@@ -9,3 +9,5 @@ Dockerfile
 *.tar.gz
 .mypy_cache
 .idea
+/cache.json
+.env

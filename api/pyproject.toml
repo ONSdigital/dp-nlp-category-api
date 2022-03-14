@@ -16,12 +16,15 @@ packages = [
 
 # For installable server
 [tool.poetry.dependencies]
-ff_fasttext # Replace with wheel when building in Docker
+python = ">=3.9"
+# ff_fasttext - poetry can not currently recognise a local maturin project as Python
 click = "^8.0.3"
 fastapi = "0.52"
 pydantic = "^1.9.0"
-elasticsearch2 = "^2.5.1" # for some reason, this must be explicit
+elasticsearch2 = ">=2.0.0,<3.0.0"
 uvicorn = "^0.17.4"
+dynaconf = "^3.1.7"
+elasticsearch-dsl = "^7.0"
 
 [tool.poetry.scripts]
 ff_fasttext_cli = "ff_fasttext_api.scripts.ff_fasttext:main"
