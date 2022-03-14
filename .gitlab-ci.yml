@@ -26,5 +26,3 @@ build:
   script:
   - docker  build -t $CONTAINER_IMAGE -t $IMAGE_LATEST_TAG -t $IMAGE_SHA_TAG .
   - docker image push --all-tags $CI_REGISTRY_IMAGE
-  only:
-    - main
