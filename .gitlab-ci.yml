@@ -24,5 +24,6 @@ build:
   stage: build
   image: docker
   script:
-  - docker  build -t $CONTAINER_IMAGE -t $IMAGE_LATEST_TAG -t $IMAGE_SHA_TAG .
+  - apk add make m4
+  - make build
   - docker image push --all-tags $CI_REGISTRY_IMAGE

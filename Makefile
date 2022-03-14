@@ -1,5 +1,5 @@
-SHELL=bash
-MAIN=build
+SHELL=sh
+MAIN=build-dev
 
 BUILD=build
 
@@ -14,11 +14,15 @@ wheels:
 
 .PHONY: build
 build: Dockerfile
-	docker-compose build
+	docker build -t ${CONTAINER_IMAGE} -t ${IMAGE_LATEST_TAG} -t ${IMAGE_SHA_TAG} .
+
+.PHONY: build-dev
+build-dev: Dockerfile
+	docker-compose build-dev
 
 Dockerfile:
 	m4 Dockerfile.in > Dockerfile
 
 .PHONY: run
-run: build
+run: build-dev
 	docker-compose up
