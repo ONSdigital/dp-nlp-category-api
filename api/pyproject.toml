@@ -24,7 +24,7 @@ pydantic = "^1.9.0"
 elasticsearch2 = ">=2.0.0,<3.0.0"
 uvicorn = "^0.17.4"
 dynaconf = "^3.1.7"
-elasticsearch-dsl = "^7.0"
+elasticsearch-dsl = ">=2.0,<3.0"
 
 [tool.poetry.scripts]
 ff_fasttext_cli = "ff_fasttext_api.scripts.ff_fasttext:main"
