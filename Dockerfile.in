@@ -21,7 +21,7 @@ WORKDIR /app
 
 COPY api/pyproject.toml /app
 COPY api/poetry.lock /app
-RUN poetry add $(ls -1 *.whl)
+RUN poetry add ./$(ls -1 *.whl)
 
 COPY api/ff_fasttext_api /app/ff_fasttext_api
 
