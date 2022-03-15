@@ -110,7 +110,7 @@ def load(model_file):
             cached = json.load(cache_f)
         classifier_bow = SortedDict({
                 tuple(key.split('|')): tuple((c, v) for c, v in terms)
-                for key, terms in cached['classifier-bow'].items()
+                for key, terms in cached['classifier-bow']
         })
     else:
         classifier_bow = categories_to_classifier_bow(category_manager.strip_document, categories)

@@ -141,7 +141,7 @@ class CategoryManager:
 
     @staticmethod
     def _significance_for_vector(vector):
-        return min(max(0.5, np.linalg.norm(vector) * 1e2), 1.5)
+        return min(max(0.5, np.linalg.norm(vector) * 1e2), 1.25)
 
     def test(self, sentence, category_group='dtcats'):
         categories = self._categories[category_group]

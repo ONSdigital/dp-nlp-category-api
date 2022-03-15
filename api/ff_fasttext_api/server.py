@@ -1,10 +1,12 @@
 import logging
+from typing import Optional
 import os
 os.environ['DEBUG_LEVEL_FOR_DYNACONF'] = 'DEBUG'
 from fastapi import FastAPI
 from .settings import settings
 
 from ff_fasttext.extract import load
+from ff_fasttext.utils import filter_by_snr
 
 def make_app(category_manager):
     app = FastAPI()
@@ -36,11 +38,13 @@ def make_app(category_manager):
         }
 
     @app.get('/categories')
-    def get_categories(query: str):
+    def get_categories(query: str, snr: Optional[float] = 0.9):
         if DUMMY_RUN:
             return []
 
         categories = category_manager.test(query.strip(), 'onyxcats')
+        if snr is not None:
+            categories = filter_by_snr(categories, snr)
         return [
             {'s': float(c[0]), 'c': list(c[1])} for c in categories if c[0] > THRESHOLD
         ]
