@@ -38,7 +38,7 @@ def make_app(category_manager):
         }
 
     @app.get('/categories')
-    def get_categories(query: str, snr: Optional[float] = 1.3):
+    def get_categories(query: str, snr: Optional[float] = 1.275):
         if DUMMY_RUN:
             return []
 
