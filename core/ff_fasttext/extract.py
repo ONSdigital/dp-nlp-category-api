@@ -113,6 +113,7 @@ def load(model_file):
     # Import and download stopwords from NLTK.
     download('stopwords')  # Download stopwords list.
     download('omw-1.4')  # Download lemma list.
+    download('wordnet')  # Download lemma list.
 
     category_manager = CategoryManager(model)
 
