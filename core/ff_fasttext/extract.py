@@ -54,13 +54,13 @@ def get_datasets(cm, classifier_bow):
 
                 datasets[hit.description.title]['bow'] = cm.closest(datasets[hit.description.title]['text'], cat, classifier_bow_vec)
                 document = hit.description.title + ' ' + datasets[hit.description.title]['text']
-                all_words.update(set(sum(cm.strip_document(document), [])))
+                all_words.update({ltzr.lemmatize(v) for v in set(sum(cm.strip_document(document), []))})
                 datasets[hit.description.title]['bow'] = cm.closest(document, cat, classifier_bow_vec)
             except AttributeError as e:
                 pass
             pbar.update(1)
 
-    all_words = {w: ltzr.lemmatize(str(v)) for w, v in all_words.items() if v > 100}
+    all_words = {w: v for w, v in all_words.items() if v > 100}
     return datasets, all_words
 
 def discover_terms(datasets, classifier_bow):

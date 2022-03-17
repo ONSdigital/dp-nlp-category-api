@@ -71,12 +71,12 @@ class CategoryManager:
 
     def set_all_words(self, all_words):
         total = sum(all_words.values())
-        scale = lambda c: 0.25 + math.exp(100 * (1 - c) / total) * 0.75
+        scale = lambda c: 0.25 + math.exp(1000 * (1 - c) / total) * 0.75
         self.all_words = {w: scale(c) for w, c in all_words.items()}
 
     def _scale_by_frequency(self, word):
-        if word in self.all_words:
-            lword = self._ltzr.lemmatize(word)
+        lword = self._ltzr.lemmatize(word)
+        if lword in self.all_words:
             scale = self.all_words[lword]
             return scale
 
