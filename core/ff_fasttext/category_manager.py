@@ -1,7 +1,9 @@
 import numpy as np
+import math
 import re
 from sortedcontainers import SortedDict
 from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
 
 from .settings import settings
 from .utils import cosine_similarities
@@ -17,7 +19,7 @@ WEIGHTING = settings.get('WEIGHTING', {
     'WSSC': 5
 })
 EXTRA_STOPWORDS = {
-    'english': ['statistics'],
+    'english': ['statistics', 'data'],
     'welsh': []
 }
 EXTRA_STOPWORDS.update(settings.get('EXTRA_STOPWORDS', {}))
@@ -64,6 +66,21 @@ class CategoryManager:
         self._model = WModel(word_model)
         self._stop_words = stopwords.words(STOPWORDS_LANGUAGE) + EXTRA_STOPWORDS[STOPWORDS_LANGUAGE]
         self._significance = np.vectorize(self._significance_for_vector, signature='(m)->()')
+        self._ltzr = WordNetLemmatizer()
+        self.all_words = {}
+
+    def set_all_words(self, all_words):
+        total = sum(all_words.values())
+        scale = lambda c: 0.25 + math.exp(100 * (1 - c) / total) * 0.75
+        self.all_words = {w: scale(c) for w, c in all_words.items()}
+
+    def _scale_by_frequency(self, word):
+        if word in self.all_words:
+            lword = self._ltzr.lemmatize(word)
+            scale = self.all_words[lword]
+            return scale
+
+        return 1.0
 
     def add_categories_from_bow(self, name, classifier_bow):
         self._categories[name] = SortedDict(
@@ -159,7 +176,7 @@ class CategoryManager:
             if not words:
                 continue
 
-            vec = np.mean([self._model[w] for w in words], axis=0)
+            vec = np.mean([self._model[w] * self._scale_by_frequency(w) for w in words], axis=0)
             result = cosine_similarities(vec, topic_vectors)
             result = np.multiply(result, significance)
 

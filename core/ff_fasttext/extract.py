@@ -7,6 +7,7 @@ from elasticsearch2 import Elasticsearch
 from elasticsearch_dsl import Search, Q
 from nltk import download
 from tqdm import tqdm
+from nltk.stem.wordnet import WordNetLemmatizer
 
 from .settings import settings
 from .ff_fasttext import FfModel
@@ -21,6 +22,8 @@ CACHE_TARGET = settings.get('CACHE_TARGET', None)
 REBUILD_CACHE = settings.get('REBUILD_CACHE', False)
 
 def get_datasets(cm, classifier_bow):
+    ltzr = WordNetLemmatizer()
+
     classifier_bow_vec = {
         k: [cm._model[w[1]] for w in words]
         for k, words in classifier_bow.items()
@@ -35,6 +38,8 @@ def get_datasets(cm, classifier_bow):
     expecting = s.count()
     size = 50
     s = s.params(size=size)
+    n = 0
+    all_words = Counter()
     with tqdm(total=expecting) as pbar:
         for hit in s.scan():
             try:
@@ -48,10 +53,15 @@ def get_datasets(cm, classifier_bow):
                     datasets[hit.description.title]['category'] = cat
 
                 datasets[hit.description.title]['bow'] = cm.closest(datasets[hit.description.title]['text'], cat, classifier_bow_vec)
+                document = hit.description.title + ' ' + datasets[hit.description.title]['text']
+                all_words.update(set(sum(cm.strip_document(document), [])))
+                datasets[hit.description.title]['bow'] = cm.closest(document, cat, classifier_bow_vec)
             except AttributeError as e:
                 pass
             pbar.update(1)
-    return datasets
+
+    all_words = {w: ltzr.lemmatize(v) for w, v in all_words.items() if v > 100}
+    return datasets, all_words
 
 def discover_terms(datasets, classifier_bow):
     discovered_terms = {}
@@ -74,31 +84,35 @@ def discover_terms(datasets, classifier_bow):
         if key[0:2] in discovered_terms:
             terms += [('WC', w) for w in discovered_terms[key[0:2]]]
 
-    if CACHE_TARGET and (not os.path.exists(CACHE_TARGET) or REBUILD_CACHE):
-        cached = {
-            'config': {
-                'APPEARANCE_THRESHOLD': APPEARANCE_THRESHOLD,
-                'UPPER_APPEARANCE_THRESHOLD': UPPER_APPEARANCE_THRESHOLD,
-            },
-            'classifier-bow': [
-                ['|'.join(key), [[c, v] for c, v in terms]]
-                for key, terms in classifier_bow.items()
-            ]
-        }
-        try:
-            with open(CACHE_TARGET, 'w') as cache_f:
-                json.dump(cached, cache_f)
-        except OSError:
-            logging.warning("Could not write cache to target %s", CACHE_TARGET)
+def save_to_cache(all_words, classifier_bow):
+    cached = {
+        'config': {
+            'APPEARANCE_THRESHOLD': APPEARANCE_THRESHOLD,
+            'UPPER_APPEARANCE_THRESHOLD': UPPER_APPEARANCE_THRESHOLD,
+        },
+        'all-words': all_words,
+        'classifier-bow': [
+            ['|'.join(key), [[c, v] for c, v in terms]]
+            for key, terms in classifier_bow.items()
+        ]
+    }
+    try:
+        with open(CACHE_TARGET, 'w') as cache_f:
+            json.dump(cached, cache_f)
+    except OSError:
+        logging.warning("Could not write cache to target %s", CACHE_TARGET)
 
 def append_discovered_terms_from_elasticsearch(cm, classifier_bow):
-    datasets = get_datasets(cm, classifier_bow)
+    datasets, all_words = get_datasets(cm, classifier_bow)
     discover_terms(datasets, classifier_bow)
+    cm.set_all_words(all_words)
+    return all_words
 
 def load(model_file):
     model = FfModel(model_file)
     # Import and download stopwords from NLTK.
     download('stopwords')  # Download stopwords list.
+    download('omw-1.4')  # Download lemma list.
 
     category_manager = CategoryManager(model)
 
@@ -112,9 +126,13 @@ def load(model_file):
                 tuple(key.split('|')): tuple((c, v) for c, v in terms)
                 for key, terms in cached['classifier-bow']
         })
+        category_manager.set_all_words(cached['all-words'])
     else:
         classifier_bow = categories_to_classifier_bow(category_manager.strip_document, categories)
-        append_discovered_terms_from_elasticsearch(category_manager, classifier_bow)
+        all_words = append_discovered_terms_from_elasticsearch(category_manager, classifier_bow)
+        if CACHE_TARGET and (not os.path.exists(CACHE_TARGET) or REBUILD_CACHE):
+            save_to_cache(all_words, classifier_bow)
+
     category_manager.add_categories_from_bow('onyxcats', classifier_bow)
 
     return category_manager
