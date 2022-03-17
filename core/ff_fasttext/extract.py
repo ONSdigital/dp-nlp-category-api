@@ -60,7 +60,7 @@ def get_datasets(cm, classifier_bow):
                 pass
             pbar.update(1)
 
-    all_words = {w: ltzr.lemmatize(v) for w, v in all_words.items() if v > 100}
+    all_words = {w: ltzr.lemmatize(str(v)) for w, v in all_words.items() if v > 100}
     return datasets, all_words
 
 def discover_terms(datasets, classifier_bow):
