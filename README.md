@@ -1,15 +1,30 @@
-# FinalFusion FastText embedding
+dp-nlp-category-api
+================
+NLP Category-Matching API
 
-## Download embeddings
-Note: I don't recommend the full common crawl or wiki model if you want to try an opq model...
-Download one of the fasttext embeddings, eg https://dl.fbaipublicfiles.com/fasttext/supervised-models/dbpedia.bin
+A Rust microservice to match queries on the ONS Website to groupings in the ONS taxonomy
 
-## Docker build
+### Getting started
+
+#### Set up taxonomy.json
+
+This should be obtained from ONS and placed in the root directory.
+
+#### Download or create embeddings
+
+These are most simply sourced as [pretrained fifu models](https://finalfusion.github.io/pretrained), but can be dynamically generated
+using the embedded FinalFusion libraries.
 
 To build and run the API using docker:
 
 ```
 make run
+```
+
+or, for Welsh,
+
+```
+make run-cy
 ```
 
 To build wheels for distribution, use:
@@ -18,16 +33,16 @@ To build wheels for distribution, use:
 make wheels
 ```
 
-## Manual building
+### Manual building
 
-### Install finalfusion utils
+#### Install finalfusion utils
 
 ``` bash
 cd core
 RUSTFLAGS="-C link-args=-lcblas -llapack" cargo install finalfusion-utils --features=opq
 ```
 
-### Optional: Convert the model to quantized fifu format
+#### Optional: Convert the model to quantized fifu format
 
 Note: if you try to use the full wiki bin you'll need about 128GB of RAM...
 
@@ -35,7 +50,7 @@ Note: if you try to use the full wiki bin you'll need about 128GB of RAM...
 finalfusion quantize -f fasttext -q opq <fasttext.bin> fasttext.fifu.opq
 ```
 
-### Install deps and build
+#### Install deps and build
 
 ``` bash
 poetry shell
@@ -46,10 +61,12 @@ poetry install
 exit
 ```
 
-### Run
+#### Run
 
 ```bash
 poetry run python -c "from ff_fasttext import FfModel; FfModel('test_data/wiki.en.fifu').eval('Hello')"
 ```
 
+### Algorithm
 
+This

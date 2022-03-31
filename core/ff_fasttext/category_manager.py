@@ -19,7 +19,7 @@ WEIGHTING = settings.get('WEIGHTING', {
     'WSSC': 5
 })
 EXTRA_STOPWORDS = {
-    'english': ['statistics', 'data'],
+    'english': ['statistics', 'data', 'measure', 'measures'],
     'welsh': []
 }
 EXTRA_STOPWORDS.update(settings.get('EXTRA_STOPWORDS', {}))

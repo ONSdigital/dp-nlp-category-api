@@ -14,7 +14,8 @@ dependencies = [
     "sortedcontainers~=2.4.0",
     "elasticsearch2~=2.5.1",
     "elasticsearch-dsl~=2.0",
-    "numpy"
+    "numpy",
+    "finalfusion"
 ]
 
 [build-system]

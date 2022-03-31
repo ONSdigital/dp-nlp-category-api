@@ -1,10 +1,15 @@
 version: "3.9"  # optional since v1.27.0
 services:
   ff_fasttext_api:
-    build: .
     #ports:
     #  - "8000:80"
+    build:
+      context: .
+      args:
+        PORT: "8000"
     network_mode: host
     volumes:
-      - ./taxonomy.json:/app/test_data/taxonomy.json
+      - ./taxonomy.json:/app/taxonomy.json
       - ./test_data:/app/test_data
+      - ./cache:/app/cache
+      - ./.env:/app/.env
