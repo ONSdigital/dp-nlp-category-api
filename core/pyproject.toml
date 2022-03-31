@@ -15,7 +15,8 @@ dependencies = [
     "elasticsearch2~=2.5.1",
     "elasticsearch-dsl~=2.0",
     "numpy",
-    "finalfusion"
+    "finalfusion",
+    "dynaconf"
 ]
 
 [build-system]

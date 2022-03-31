@@ -8,22 +8,17 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from .settings import settings
 from .utils import cosine_similarities
 
-re_ws = re.compile(r'\s+')
-re_num = re.compile(r'[^\w\s\']', flags=re.UNICODE)
-THRESHOLD = settings.get('CATEGORY_THRESHOLD', 0.1)
-WEIGHTING = settings.get('WEIGHTING', {
-    'C': 2,
-    'SC': 2,
-    'SSC': 1,
-    'WC': 3,
-    'WSSC': 5
-})
+re_ws = re.compile(r"\s+")
+re_num = re.compile(r"[^\w\s\']", flags=re.UNICODE)
+THRESHOLD = settings.get("CATEGORY_THRESHOLD", 0.1)
+WEIGHTING = settings.get("WEIGHTING", {"C": 2, "SC": 2, "SSC": 1, "WC": 3, "WSSC": 5})
 EXTRA_STOPWORDS = {
-    'english': ['statistics', 'data', 'measure', 'measures'],
-    'welsh': []
+    "english": ["statistics", "data", "measure", "measures"],
+    "welsh": [],
 }
-EXTRA_STOPWORDS.update(settings.get('EXTRA_STOPWORDS', {}))
-STOPWORDS_LANGUAGE = settings.get('STOPWORDS_LANGUAGE', 'english')
+EXTRA_STOPWORDS.update(settings.get("EXTRA_STOPWORDS", {}))
+STOPWORDS_LANGUAGE = settings.get("STOPWORDS_LANGUAGE", "english")
+
 
 class WModel:
     def __init__(self, model):
@@ -38,9 +33,11 @@ class WModel:
 
         return a
 
+
 class Category:
     vector = None
     words = None
+
     def __init__(self, key, bow, model):
         self.key = key
         self.bow = bow
@@ -55,6 +52,7 @@ class Category:
     def _set_words(self):
         self.words = [w for _, w in self.bow]
 
+
 class CategoryManager:
     _stop_words = None
     _model = None
@@ -64,8 +62,12 @@ class CategoryManager:
     def __init__(self, word_model):
         self._categories = SortedDict()
         self._model = WModel(word_model)
-        self._stop_words = stopwords.words(STOPWORDS_LANGUAGE) + EXTRA_STOPWORDS[STOPWORDS_LANGUAGE]
-        self._significance = np.vectorize(self._significance_for_vector, signature='(m)->()')
+        self._stop_words = (
+            stopwords.words(STOPWORDS_LANGUAGE) + EXTRA_STOPWORDS[STOPWORDS_LANGUAGE]
+        )
+        self._significance = np.vectorize(
+            self._significance_for_vector, signature="(m)->()"
+        )
         self._ltzr = WordNetLemmatizer()
         self.all_words = {}
 
@@ -84,46 +86,45 @@ class CategoryManager:
 
     def add_categories_from_bow(self, name, classifier_bow):
         self._categories[name] = SortedDict(
-            (k, Category(k, bow, self._model))
-            for k, bow in classifier_bow.items()
+            (k, Category(k, bow, self._model)) for k, bow in classifier_bow.items()
         )
 
     def closest(self, text, cat, classifier_bow_vec):
         word_list = set(sum(self.strip_document(text), []))
         word_scores = [
-            (word,
+            (
+                word,
                 cosine_similarities(self._model[word], classifier_bow_vec[cat]).mean()
-
-                # TODO: double check model.embedding_similarities(
-                # cm._model[word], get_cat_bow(cat)
-            #)
             )
             for word in word_list
             if cat in classifier_bow_vec
         ]
         return [
-            word for word, score in sorted(word_scores, key=lambda word: word[1], reverse=True)
+            word
+            for word, score in sorted(
+                word_scores, key=lambda word: word[1], reverse=True
+            )
             if score > 0.3
         ]
 
     def strip_document(self, doc):
         if type(doc) is list:
-            doc = ' '.join(doc)
+            doc = " ".join(doc)
 
-        docs = doc.split(',')
+        docs = doc.split(",")
         word_list = []
         for doc in docs:
-            doc = doc.replace('\n', ' ').replace('_', ' ').replace('\'', '').lower()
-            doc = re_ws.sub(' ', re_num.sub('', doc)).strip()
+            doc = doc.replace("\n", " ").replace("_", " ").replace("'", "").lower()
+            doc = re_ws.sub(" ", re_num.sub("", doc)).strip()
 
-            if doc == '':
+            if doc == "":
                 return []
 
-            word_list.append([w for w in doc.split(' ') if w not in self._stop_words])
+            word_list.append([w for w in doc.split(" ") if w not in self._stop_words])
 
         return word_list
 
-    def test_category(self, sentence, category, category_group='dtcats'):
+    def test_category(self, sentence, category, category_group="dtcats"):
         cat = self._categories[category_group][category]
 
         clean = self.strip_document(sentence)
@@ -141,26 +142,25 @@ class CategoryManager:
             vec = np.mean([self._model[w] for w in words], axis=0)
             result = cosine_similarities(vec, [cat.vector])[0]
 
-            tags[' '.join(words)] = {
-                'overall': result,
-                'by-classifier': {
-                    w: cosine_similarities(vec, [v])[0]
-                    for w, v in classifiers.items()
-                }
+            tags[" ".join(words)] = {
+                "overall": result,
+                "by-classifier": {
+                    w: cosine_similarities(vec, [v])[0] for w, v in classifiers.items()
+                },
             }
 
         return {
-            'tags': tags,
-            'vector': np.linalg.norm(cat.vector),
-            'significance': self._significance_for_vector(cat.vector),
-            'weightings': {w: WEIGHTING[code] for code, w in cat.bow}
+            "tags": tags,
+            "vector": np.linalg.norm(cat.vector),
+            "significance": self._significance_for_vector(cat.vector),
+            "weightings": {w: WEIGHTING[code] for code, w in cat.bow},
         }
 
     @staticmethod
     def _significance_for_vector(vector):
         return min(max(0.5, np.linalg.norm(vector) * 1e2), 1.25)
 
-    def test(self, sentence, category_group='dtcats'):
+    def test(self, sentence, category_group="dtcats"):
         categories = self._categories[category_group]
 
         clean = self.strip_document(sentence)
@@ -176,7 +176,9 @@ class CategoryManager:
             if not words:
                 continue
 
-            vec = np.mean([self._model[w] * self._scale_by_frequency(w) for w in words], axis=0)
+            vec = np.mean(
+                [self._model[w] * self._scale_by_frequency(w) for w in words], axis=0
+            )
             result = cosine_similarities(vec, topic_vectors)
             result = np.multiply(result, significance)
 
@@ -185,4 +187,3 @@ class CategoryManager:
             tags.update({(result[i], categories.keys()[i]) for i in top})
 
         return sorted(tags, reverse=True)
-
