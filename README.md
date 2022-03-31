@@ -88,6 +88,8 @@ Using finalfusion libraries in Rust enables mmapping for memory efficiency.
 
 A bag of words is formed, to make a vector for the category - a weighted average of the terms, according to the attribute contributing it:
 
+| Grouping | Score basis |
+| -----------------------------------------------------------------------------------------------------------------------
 | Category (top-level)                          |   Literal words within title                                          |
 | Subcategory (second-level)                    |   Literal words within title                                          |
 | Subsubcategory (third-level)                  |   Literal words within title                                          |
