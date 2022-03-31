@@ -88,13 +88,11 @@ Using finalfusion libraries in Rust enables mmapping for memory efficiency.
 
 A bag of words is formed, to make a vector for the category - a weighted average of the terms, according to the attribute contributing it:
 
-+-----------------------------------------------+-----------------------------------------------------------------------+
-| Category (top-level)                          |   Literal words within title                                          |
-| Subcategory (second-level)                    |   Literal words within title                                          |
-| Subsubcategory (third-level)                  |   Literal words within title                                          |
-| Related words across whole category           |   Common thematic words across all datasets within the category       |
-| Related words across subsubcategory           |   Common thematic words across all datasets within the subsubcategory |
-+-----------------------------------------------+-----------------------------------------------------------------------+
+ | Category (top-level)                          |   Literal words within title                                          |
+ | Subcategory (second-level)                    |   Literal words within title                                          |
+ | Subsubcategory (third-level)                  |   Literal words within title                                          |
+ | Related words across whole category           |   Common thematic words across all datasets within the category       |
+ | Related words across subsubcategory           |   Common thematic words across all datasets within the subsubcategory |
 
 To build a weighted bag of words, the system finds thematically-distinctive words occurring in dataset titles and descriptions
 present in the categories, according to the taxonomy. The "thematic distinctiveness" of words in a dataset description
