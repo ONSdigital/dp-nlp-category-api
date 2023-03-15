@@ -3,7 +3,7 @@
 
 ## STAGE 1 - Core package(s)
 
-include(`Dockerfile.wheels')
+FROM ff_fasttext_build:latest as ff
 
 RUN maturin build
 
@@ -15,7 +15,7 @@ RUN mkdir -p /app/ff_fasttext
 
 RUN pip install poetry
 
-COPY --from=maturin /app/build/target/wheels/*cp39*.whl /app
+COPY --from=ff /app/build/target/wheels/*cp39*.whl /app
 
 WORKDIR /app
 
