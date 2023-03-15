@@ -1,5 +1,6 @@
 version: "3.9"  # optional since v1.27.0
 services:
+  # this builds it with name category so either change this to ff_fasttext_api or change the name
   category:
     build:
       context: .
