@@ -10,7 +10,7 @@ from tqdm import tqdm
 from nltk.stem.wordnet import WordNetLemmatizer
 
 from .settings import settings
-from .ff_fasttext import FfModel
+from ff_fasttext import FfModel
 from .category_manager import CategoryManager
 from .taxonomy import get_taxonomy, taxonomy_to_categories, categories_to_classifier_bow
 

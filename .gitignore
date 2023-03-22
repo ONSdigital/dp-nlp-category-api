@@ -11,3 +11,4 @@ Dockerfile
 .idea
 /cache.json
 .env
+.vscode

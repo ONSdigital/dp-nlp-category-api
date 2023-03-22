@@ -18,13 +18,17 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.9"
 # ff_fasttext - poetry can not currently recognise a local maturin project as Python
+# ff_fasttext = {path="../core", develop=false}
 click = "^8.0.3"
 fastapi = "0.52"
 pydantic = "^1.9.0"
 elasticsearch2 = ">=2.0.0,<3.0.0"
 uvicorn = "^0.17.4"
 dynaconf = "^3.1.7"
-elasticsearch-dsl = ">=2.0,<3.0"
+elasticsearch-dsl = ">=7.0,<7.5"
+elasticsearch = "~=7.5"
+pytest = "^7.2.2"
+urllib3 = "~=1.26"
 
 [tool.poetry.scripts]
 ff_fasttext_cli = "ff_fasttext_api.scripts.ff_fasttext:main"
