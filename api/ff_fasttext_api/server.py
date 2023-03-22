@@ -55,5 +55,7 @@ def make_app(category_manager):
 
     return app
 
-category_manager = load('test_data/wiki.en.fifu')
-app = make_app(category_manager)
+def create_app():
+    category_manager = load('test_data/wiki.en.fifu')
+    app = make_app(category_manager)
+    return app

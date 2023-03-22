@@ -1,15 +1,3 @@
-# import pytest
-# from click.testing import CliRunner
-# from ff_fasttext_api.scripts.ff_fasttext import main
-# from ff_fasttext.extract import load
-
-# @pytest.fixture
-# def category_manager():
-#     return load('test_data/wiki.en.fifu')
-
-# def test_main():
-
-#     assert 0 == 0
 from click.testing import CliRunner
 from unittest.mock import patch, MagicMock
 from ff_fasttext.extract import CategoryManager
@@ -26,12 +14,10 @@ def test_main():
     # Use CliRunner to simulate user input
     runner = CliRunner()
     with patch('ff_fasttext_api.scripts.ff_fasttext.load', return_value=category_manager):
-        # Test with some example sentences
         result1 = runner.invoke(main, input="This is a test sentence.\n")
         result2 = runner.invoke(main, input="Another test sentence.\n")
         result3 = runner.invoke(main, input="\\quit\n")
 
-        # Assert that the output is as expected
         assert result1.exit_code == 1
         assert 'cat1->cat2(0.90)' in result1.output
         assert 'cat3(0.80)' in result1.output
