@@ -283,7 +283,7 @@ standard = ["websockets (>=10.0)", "httptools (>=0.4.0)", "watchgod (>=0.6)", "p
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.9"
-content-hash = "e999a9bd3d45560e67dcc34ce448d409497ba244935f38ef1bcec8e3e68e2601"
+content-hash = "b4fb7b5f179d0543660acbc954edaf2440101b30509f9bda6b55717dac42be1f"
 
 [metadata.files]
 asgiref = []
