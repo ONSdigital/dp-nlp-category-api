@@ -23,9 +23,7 @@ def make_app(category_manager, health_check):
     @app.get('/categories/{cat}')
     def get_category(cat: str, query: str):
         category = tuple(cat.split('|'))
-
         scoring = category_manager.test_category(query.strip(), category, 'onyxcats')
-
         logger.info(
             event="category tested",
             category=category,
@@ -63,7 +61,6 @@ def make_app(category_manager, health_check):
             return []
 
         categories = category_manager.test(query.strip(), 'onyxcats')
-
         logger.info(
             event="testing categories",
             query=query,
@@ -79,7 +76,6 @@ def make_app(category_manager, health_check):
 
     @app.get('/health')
     def health():
-        
         return health_check.to_json()
 
     return app
@@ -90,9 +86,8 @@ def create_app():
 
     health = Healthcheck(status="OK", version='1.0.0', uptime=uptime, start_time=start_time, checks=[])
     category_manager = load('test_data/wiki.en.fifu')
-
     logger.info("successfully loaded category manager")
 
     app = make_app(category_manager, health)
-    
+
     return app
