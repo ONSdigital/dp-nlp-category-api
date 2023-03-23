@@ -1,6 +1,6 @@
 import click
 
-from bonn.extract import load
+from ff_fasttext.extract import load
 from ff_fasttext_api.logger import configure_logging, setup_logger
 
 configure_logging()
