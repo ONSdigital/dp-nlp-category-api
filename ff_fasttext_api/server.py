@@ -22,15 +22,25 @@ def make_app(category_manager, health_check):
 
     @app.get('/categories/{cat}')
     def get_category(cat: str, query: str):
-        category = tuple(cat.split('|'))
-        scoring = category_manager.test_category(query.strip(), category, 'onyxcats')
-        logger.info(
-            event="category tested",
-            category=category,
-            query=query,
-            weightings=scoring['weightings'],
-            scoring=scoring['tags'],
-        )
+        try:
+            category = tuple(cat.split('|'))
+            scoring = category_manager.test_category(query.strip(), category, 'onyxcats')
+            logger.info(
+                event="category tested",
+                category=category,
+                query=query,
+                weightings=scoring['weightings'],
+                scoring=scoring['tags'],
+            )
+        except Exception as e:
+            logger.error(
+                event="category testing failed",
+                query=query,
+            )
+            return {
+                "message": "Internal Server Error",
+                "error code": "" # to be aggreed upon
+            }
 
         return {
             'weightings': {w: x for w, x in scoring['weightings'].items()},
@@ -55,21 +65,33 @@ def make_app(category_manager, health_check):
     def get_categories(query: str, snr: Optional[float] = 1.275):
         if DUMMY_RUN:
             logger.warning(
-                event="Dummy run is enabled, returning empty list",
+                event="dummy run is enabled, returning empty list",
                 severity=2    
             )
             return []
 
-        categories = category_manager.test(query.strip(), 'onyxcats')
-        logger.info(
-            event="testing categories",
-            query=query,
-            snr=snr,
-        )
+        try:
+            categories = category_manager.test(query.strip(), 'onyxcats')
+            logger.info(
+                event="testing categories",
+                query=query,
+                snr=snr,
+            )
 
-        if snr is not None:
-            categories = filter_by_snr(categories, snr)
-            logger.debug("successfully filtered categories by SNR", snr=snr)
+            if snr is not None:
+                categories = filter_by_snr(categories, snr)
+                logger.debug("successfully filtered categories by SNR", snr=snr)
+        except Exception as e:
+            logger.error(
+                event="testing and filtration of categories failed", 
+                error=str(e), 
+                severity=1
+            )
+            return {
+                "message": "Internal Server Error",
+                "error code": "" # to be aggreed upon
+            }
+        
         return [
             {'s': float(c[0]), 'c': list(c[1])} for c in categories if c[0] > THRESHOLD
         ]
