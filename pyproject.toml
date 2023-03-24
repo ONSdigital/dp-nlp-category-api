@@ -1,0 +1,39 @@
+# API
+
+[tool.poetry]
+name = "ff_fasttext_api"
+version = "0.0.1"
+description = "Created for ONS. API/CLI wrapper for proof-of-concept mmap'd Rust word2vec implementation linked with category matching"
+license = "MIT"
+authors = [
+    "Phil Weir <phil.weir@flaxandteal.co.uk>",
+    "Kanika Miglani <kanika.miglani@flaxandteal.co.uk>"
+]
+packages = [
+    { include = "ff_fasttext_api" },
+    { include = "ff_fasttext_api/scripts" }
+]
+
+# For installable server
+[tool.poetry.dependencies]
+python = ">=3.9"
+# ff_fasttext - poetry can not currently recognise a local maturin project as Python
+# ff_fasttext = {path="../core", develop=false}
+bonn = "~=0.1"
+click = "^8.0.3"
+fastapi = "0.52"
+pydantic = "^1.9.0"
+uvicorn = "^0.17.4"
+dynaconf = "^3.1.7"
+pytest = "^7.2.2"
+urllib3 = "~=1.26"
+structlog = "~=21.5"
+
+[tool.poetry.scripts]
+ff_fasttext_cli = "ff_fasttext_api.scripts.ff_fasttext:main"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

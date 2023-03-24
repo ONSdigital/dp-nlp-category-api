@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from ff_fasttext_api.server import make_app
 from unittest.mock import patch, MagicMock
-from ff_fasttext.extract import CategoryManager
+from bonn.extract import CategoryManager
 
 @pytest.fixture(scope='module')
 def test_client():

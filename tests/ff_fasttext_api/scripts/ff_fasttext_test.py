@@ -1,6 +1,6 @@
 from click.testing import CliRunner
 from unittest.mock import patch, MagicMock
-from ff_fasttext.extract import CategoryManager
+from bonn.extract import CategoryManager
 from ff_fasttext_api.scripts.ff_fasttext import main
 
 def test_main():
