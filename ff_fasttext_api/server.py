@@ -91,7 +91,7 @@ def make_app(category_manager, health_check):
                 "message": "Internal Server Error",
                 "error code": "" # to be aggreed upon
             }
-        
+
         return [
             {'s': float(c[0]), 'c': list(c[1])} for c in categories if c[0] > THRESHOLD
         ]
