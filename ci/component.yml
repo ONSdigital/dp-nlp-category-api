@@ -12,4 +12,4 @@ inputs:
   - name: dp-nlp-category-api
 
 run:
-  path: dp-category-api/ci/scripts/component.sh
+  path: dp-nlp-category-api/ci/scripts/component.sh
