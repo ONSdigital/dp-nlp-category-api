@@ -103,4 +103,4 @@ lint: deps
 
 .PHONY: audit
 audit: deps
-	poetry run jake ddt
+	poetry run jake ddt --whitelist ci/audit-allow-list.json

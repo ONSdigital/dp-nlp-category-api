@@ -1,0 +1,6 @@
+{"ignore":
+    [
+        {"id": "CVE-2018-20225", "reason": "pip: not relevant to our install flow and marked design decision"},
+        {"id": "sonatype-2014-0148", "reason": "setuptools: not relevant to our install flow and closed wont-fix"}
+    ]
+}
