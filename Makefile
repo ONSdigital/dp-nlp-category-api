@@ -11,6 +11,9 @@ WHITE  := $(shell tput -Txterm setaf 7)
 CYAN   := $(shell tput -Txterm setaf 6)
 RESET  := $(shell tput -Txterm sgr0)
 
+EXISTS_POETRY := $(shell command -v poetry 2> /dev/null)
+EXISTS_FLASK := $(shell command -v uvicorn 2> /dev/null)
+
 .PHONY: all
 all: build-dev
 
@@ -67,33 +70,37 @@ help: ## Show this help.
 		else if (/^## .*$$/) {printf "  ${CYAN}%s${RESET}\n", substr($$1,4)} \
 		}' $(MAKEFILE_LIST)
 
-.installed-poetry: pyproject.toml poetry.lock
-	pip install --quiet poetry
-	poetry install --quiet
-	touch .installed-poetry
+.PHONY: deps
+deps:
+	@if [ -z "$(EXISTS_FLASK)" ]; then \
+	if [ -z "$(EXISTS_POETRY)" ]; then \
+	       pip -qq install poetry; \
+	fi; \
+	       poetry install --quiet || poetry install; \
+	fi
 
 .PHONY: test-component
-test-component: .installed-poetry
+test-component: deps
 	poetry run pytest tests/api
 
 .PHONY: unit
-unit: .installed-poetry
+unit: deps
 	poetry run pytest tests/unit
 
 .PHONY: test
 test: unit test-component
 
 .PHONY: fmt
-fmt: .installed-poetry
+fmt: deps
 	poetry run isort ff_fasttext_api
 	poetry run black ff_fasttext_api
 
 .PHONY: lint
-lint: .installed-poetry
+lint: deps
 	ls -a
 	poetry run pflake8 ff_fasttext_api
 	poetry run black --check ff_fasttext_api
 
 .PHONY: audit
-audit: .installed-poetry
+audit: deps
 	poetry run jake ddt
