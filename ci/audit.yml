@@ -4,12 +4,18 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: onsdigital/dp-concourse-tools-nancy
-    tag: latest
+    repository: python
+    tag: 3.9
+
+params:
+  POETRY_CACHE_DIR: .poetry/
 
 inputs:
   - name: dp-nlp-category-api
-    path: dp-nlp-category-api
+
+caches:
+  - path: dp-nlp-category-api/.poetry/
+  - path: dp-nlp-category-api/.venv/
 
 run:
   path: dp-nlp-category-api/ci/scripts/audit.sh

@@ -74,10 +74,11 @@ help: ## Show this help.
 deps:
 	@if [ -z "$(EXISTS_FLASK)" ]; then \
 	if [ -z "$(EXISTS_POETRY)" ]; then \
-	       pip -qq install poetry; \
+		pip -qq install poetry; \
+		poetry config virtualenvs.in-project true; \
 	fi; \
-	       poetry install --quiet || poetry install; \
-	fi
+		poetry install --quiet || poetry install; \
+	fi; \
 
 .PHONY: test-component
 test-component: deps
@@ -97,7 +98,6 @@ fmt: deps
 
 .PHONY: lint
 lint: deps
-	ls -a
 	poetry run pflake8 ff_fasttext_api
 	poetry run black --check ff_fasttext_api
 
