@@ -1,5 +1,8 @@
 # API
 
+[tool.flake8]
+max-line-length = 120
+
 [tool.poetry]
 name = "ff_fasttext_api"
 version = "0.0.1"
@@ -16,7 +19,7 @@ packages = [
 
 # For installable server
 [tool.poetry.dependencies]
-python = ">=3.9"
+python = ">=3.9,<4"
 # ff_fasttext - poetry can not currently recognise a local maturin project as Python
 # ff_fasttext = {path="../core", develop=false}
 bonn = "~=0.1"
@@ -28,6 +31,13 @@ dynaconf = "^3.1.7"
 pytest = "^7.2.2"
 urllib3 = "~=1.26"
 structlog = "~=21.5"
+requests = "^2.28.2"
+black = "^23.1.0"
+flake8 = "^6.0.0"
+jake = "^3.0.0"
+pyproject-flake8 = "^6.0.0.post1"
+isort = "^5.12.0"
+
 
 [tool.poetry.scripts]
 ff_fasttext_cli = "ff_fasttext_api.scripts.ff_fasttext:main"

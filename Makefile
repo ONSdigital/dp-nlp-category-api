@@ -3,9 +3,7 @@ MAIN=build-dev
 
 BUILD=build
 
-CONTAINER_IMAGE=registry.gitlab.com/flaxandteal/onyx/ff_fasttext_poc:build-481688189
-IMAGE_LATEST_TAG=registry.gitlab.com/flaxandteal/onyx/ff_fasttext_poc:latest
-IMAGE_SHA_TAG=registry.gitlab.com/flaxandteal/onyx/ff_fasttext_poc:0321b497
+CONTAINER_IMAGE=ff_fasttext_api:latest
 
 GREEN  := $(shell tput -Txterm setaf 2)
 YELLOW := $(shell tput -Txterm setaf 3)
@@ -24,7 +22,7 @@ wheels:
 
 .PHONY: build
 build: Dockerfile
-	docker build -t ${CONTAINER_IMAGE} -t ${IMAGE_LATEST_TAG} -t ${IMAGE_SHA_TAG} .
+	docker build -t ${CONTAINER_IMAGE} .
 
 .PHONY: build-dev
 build-dev: Dockerfile
@@ -69,8 +67,33 @@ help: ## Show this help.
 		else if (/^## .*$$/) {printf "  ${CYAN}%s${RESET}\n", substr($$1,4)} \
 		}' $(MAKEFILE_LIST)
 
+.installed-poetry: pyproject.toml poetry.lock
+	pip install --quiet poetry
+	poetry install --quiet
+	touch .installed-poetry
+
+.PHONY: test-component
+test-component: .installed-poetry
+	poetry run pytest tests/api
+
+.PHONY: unit
+unit: .installed-poetry
+	poetry run pytest tests/unit
+
 .PHONY: test
-test:
-	pip install poetry
-	poetry install
-	pytest
+test: unit test-component
+
+.PHONY: fmt
+fmt: .installed-poetry
+	poetry run isort ff_fasttext_api
+	poetry run black ff_fasttext_api
+
+.PHONY: lint
+lint: .installed-poetry
+	ls -a
+	poetry run pflake8 ff_fasttext_api
+	poetry run black --check ff_fasttext_api
+
+.PHONY: audit
+audit: .installed-poetry
+	poetry run jake ddt

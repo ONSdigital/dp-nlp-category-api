@@ -5,8 +5,8 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: golang
-    tag: 1.19.5
+    repository: python
+    tag: 3.9
 
 inputs:
   - name: dp-nlp-category-api

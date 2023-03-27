@@ -1,5 +1,5 @@
 #!/bin/bash -eux
 
-pushd dp-nlp-search-scrubber
-  make test
+pushd dp-nlp-category-api
+  make unit
 popd

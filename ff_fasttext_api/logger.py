@@ -1,5 +1,7 @@
-import structlog
 from datetime import datetime
+
+import structlog
+
 
 def configure_logging():
     structlog.configure(
@@ -10,6 +12,7 @@ def configure_logging():
         context_class=structlog.threadlocal.wrap_dict(dict),
         logger_factory=structlog.stdlib.LoggerFactory(),
     )
+
 
 def setup_logger(severity):
     return structlog.get_logger(
