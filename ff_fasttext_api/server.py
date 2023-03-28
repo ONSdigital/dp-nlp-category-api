@@ -1,10 +1,12 @@
-import logging
-from typing import Optional
 import os
+import time
 os.environ['DEBUG_LEVEL_FOR_DYNACONF'] = 'DEBUG'
-from fastapi import FastAPI
-from .settings import settings
 
+from fastapi import FastAPI
+from typing import Optional
+from .settings import settings
+from datetime import datetime
+from ff_fasttext_api.healthcheck import Healthcheck
 from bonn.extract import load
 from bonn.utils import filter_by_snr
 from .logger import configure_logging, setup_logger
@@ -12,7 +14,7 @@ from .logger import configure_logging, setup_logger
 configure_logging()
 logger = setup_logger(severity=3)
 
-def make_app(category_manager):
+def make_app(category_manager, health_check):
     app = FastAPI()
 
     DUMMY_RUN = settings.get('DUMMY_RUN', os.getenv('FF_FASTTEXT_DUMMY_RUN', '') == '1')
@@ -77,15 +79,20 @@ def make_app(category_manager):
 
     @app.get('/health')
     def health():
-        return 'OK'
+        
+        return health_check.to_json()
 
     return app
 
 def create_app():
+    start_time = datetime.utcnow().isoformat()
+    uptime = time.time()
+
+    health = Healthcheck(status="OK", version='1.0.0', uptime=uptime, start_time=start_time, checks=[])
     category_manager = load('test_data/wiki.en.fifu')
 
     logger.info("successfully loaded category manager")
 
-    app = make_app(category_manager)
+    app = make_app(category_manager, health)
     
     return app

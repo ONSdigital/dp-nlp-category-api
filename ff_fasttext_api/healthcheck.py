@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 
 # Define the check statuses
@@ -15,11 +14,9 @@ class Healthcheck:
         self.checks = checks
 
     def to_json(self):
-        # Get the current time in UTC
         now = datetime.utcnow().isoformat()
 
-        # Calculate the uptime in seconds
-        uptime_sec = self.uptime / 1000
+        uptime_sec = self.uptime
 
         # Define the healthcheck response
         response = {
@@ -32,4 +29,4 @@ class Healthcheck:
         }
 
         # Convert the response to JSON and return it
-        return json.dumps(response)
+        return response
