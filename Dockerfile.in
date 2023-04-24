@@ -15,19 +15,22 @@ RUN mkdir -p /app/ff_fasttext
 
 RUN pip install poetry
 
+COPY test_data/wiki.en.fifu /app/test_data/wiki.en.fifu
+COPY test_data/taxonomy.json /app/test_data/taxonomy.json
+
 COPY --from=ff /app/build/target/wheels/*cp39*.whl /app
 
 WORKDIR /app
 
-COPY api/pyproject.toml /app
-COPY api/poetry.lock /app
-RUN poetry add ./$(ls -1 *.whl)
+COPY pyproject.toml /app
+COPY poetry.lock /app
+# RUN poetry add ./$(ls -1 ./build/wheels/*.whl)
 
-COPY api/ff_fasttext_api /app/ff_fasttext_api
+COPY ff_fasttext_api /app/ff_fasttext_api
 
 RUN poetry install
 
 # We want to use poetry for consistency and because it is designed to reproducibly
 # manage Python - however the link at the top gives ways of doing this multistage,
 # which would be slightly nicer.
-CMD ["poetry", "run", "uvicorn", "--factory", "ff_fasttext_api.server:create_app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["poetry", "run", "uvicorn", "--factory", "ff_fasttext_api.server:create_app", "--host", "0.0.0.0", "--port", "3003"]

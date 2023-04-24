@@ -13,7 +13,7 @@ class Healthcheck:
         self.status = status
         self.version = {
             "version": version,
-            "git_commit": self.get_last_commit(),
+            # "git_commit": self.get_last_commit(),
             "language": "python",
             "language_version": sys.version,
         }
@@ -35,9 +35,9 @@ class Healthcheck:
 
         return response
     
-    def get_last_commit(self):
-        last_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()
-        return last_commit
+    # def get_last_commit(self):
+    #     last_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()
+    #     return last_commit
     
     def get_uptime(self, start_time):
         uptime = time.time()
