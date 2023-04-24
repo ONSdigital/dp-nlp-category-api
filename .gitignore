@@ -12,3 +12,4 @@ Dockerfile
 /cache.json
 .env
 .vscode
+.pytest_cache
