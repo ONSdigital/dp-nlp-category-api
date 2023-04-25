@@ -12,11 +12,9 @@ RUN maturin build
 FROM python:3.9
 
 RUN mkdir -p /app/ff_fasttext
+RUN mkdir -p /app/test_data
 
 RUN pip install poetry
-
-COPY test_data/wiki.en.fifu /app/test_data/wiki.en.fifu
-COPY test_data/taxonomy.json /app/test_data/taxonomy.json
 
 COPY --from=ff /app/build/target/wheels/*cp39*.whl /app
 
@@ -24,9 +22,9 @@ WORKDIR /app
 
 COPY pyproject.toml /app
 COPY poetry.lock /app
-# RUN poetry add ./$(ls -1 ./build/wheels/*.whl)
 
 COPY ff_fasttext_api /app/ff_fasttext_api
+COPY data /app/test_data
 
 RUN poetry install
 

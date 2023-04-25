@@ -25,7 +25,7 @@ wheels:
 
 .PHONY: build
 build: Dockerfile
-	docker build -t ${CONTAINER_IMAGE} .
+	docker build -t ${CONTAINER_IMAGE} --no-cache .
 
 .PHONY: build-dev
 build-dev: Dockerfile

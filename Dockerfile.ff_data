@@ -1,4 +1,0 @@
-FROM alpine
-
-COPY test_data/wiki.en.fifu .
-COPY test_data/taxonomy.json .
