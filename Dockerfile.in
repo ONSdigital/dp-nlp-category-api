@@ -24,7 +24,7 @@ COPY pyproject.toml /app
 COPY poetry.lock /app
 
 COPY ff_fasttext_api /app/ff_fasttext_api
-COPY data /app/test_data
+COPY test_data /app/test_data
 
 RUN poetry install
 
