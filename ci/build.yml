@@ -14,5 +14,9 @@ inputs:
 outputs:
   - name: build
 
+caches:
+  - path: dp-nlp-category-api/.poetry/
+  - path: dp-nlp-category-api/.venv/
+  
 run:
   path: dp-nlp-category-api/ci/scripts/build.sh
