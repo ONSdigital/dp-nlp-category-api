@@ -28,7 +28,7 @@ build: Dockerfile ## Creates a Dockerfile from Dockerfile.in if non exists, then
 	docker build -t ${CONTAINER_IMAGE} .
 
 .PHONY: build-bin
-build-bin:  ## Builds a binary file called 
+build-bin: deps  ## Builds a binary file called 
 	poetry build
 
 .PHONY: build-dev
