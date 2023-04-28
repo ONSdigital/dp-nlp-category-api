@@ -14,3 +14,4 @@ Dockerfile
 .vscode
 .pytest_cache
 /data
+/dist

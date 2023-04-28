@@ -14,12 +14,22 @@ RESET  := $(shell tput -Txterm sgr0)
 EXISTS_POETRY := $(shell command -v poetry 2> /dev/null)
 EXISTS_FLASK := $(shell command -v uvicorn 2> /dev/null)
 
+
 .PHONY: all
 all: build ## 
+
+.PHONY: audit
+audit: deps ## Makes sure dep are installed and audits code for vulnerable dependencies
+	pip install safety
+	safety check
 
 .PHONY: build
 build: Dockerfile ## Creates a Dockerfile from Dockerfile.in if non exists, then builds docker image - name: ff_fasttext_api:latest
 	docker build -t ${CONTAINER_IMAGE} .
+
+.PHONY: build-bin
+build-bin:  ## Builds a binary file called 
+	poetry build
 
 .PHONY: build-dev
 build-dev: Dockerfile ## Runs docker-compose build
@@ -61,17 +71,6 @@ cache/cache-cy.json:
 model: build-dev
 	docker-compose run -e RUST_BACKTRACE=1 --entrypoint poetry ff_fasttext_api run ffp-convert -f textdims ${INPUT_VEC} -t finalfusion ${OUTPUT_FIFU}
 
-.PHONY: help
-help: ## Show this help.
-	@echo ''
-	@echo 'Usage:'
-	@echo '  ${YELLOW}make${RESET} ${GREEN}<target>${RESET}'
-	@echo ''
-	@echo 'Targets:'
-	@awk 'BEGIN {FS = ":.*?## "} { \
-		if (/^[a-zA-Z_-]+:.*?##.*$$/) {printf "    ${YELLOW}%-20s${GREEN}%s${RESET}\n", $$1, $$2} \
-		else if (/^## .*$$/) {printf "  ${CYAN}%s${RESET}\n", substr($$1,4)} \
-		}' $(MAKEFILE_LIST)
 
 .PHONY: deps
 deps: ## Installs dependencies
@@ -104,6 +103,15 @@ lint: deps ## Makes sure dep are installed and lints code
 	poetry run pflake8 ff_fasttext_api
 	poetry run black --check ff_fasttext_api
 
-.PHONY: audit
-audit: deps ## Makes sure dep are installed and audits code
-	poetry run jake ddt --whitelist ci/audit-allow-list.json
+.PHONY: help
+help: ## Show this help.
+	@echo ''
+	@echo 'Usage:'
+	@echo '  ${YELLOW}make${RESET} ${GREEN}<target>${RESET}'
+	@echo ''
+	@echo 'Targets:'
+	@awk 'BEGIN {FS = ":.*?## "} { \
+		if (/^[a-zA-Z_-]+:.*?##.*$$/) {printf "    ${YELLOW}%-20s${GREEN}%s${RESET}\n", $$1, $$2} \
+		else if (/^## .*$$/) {printf "  ${CYAN}%s${RESET}\n", substr($$1,4)} \
+		}' $(MAKEFILE_LIST)
+
