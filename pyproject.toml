@@ -24,6 +24,7 @@ python = ">=3.9,<4"
 # ff_fasttext = {path="../core", develop=false}
 bonn = "^0.1"
 click = "^8.0.3"
+httpx = "^0.24.0"
 starlette = "^0.25.0"
 fastapi = "^0.93"
 pydantic = "^1.9.0"
