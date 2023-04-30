@@ -2,18 +2,20 @@ from datetime import datetime
 import subprocess
 import time
 import sys
+import os
 
 # Define the check statuses
 OK = 'OK'
 WARNING = 'WARNING'
 ERROR = 'ERROR'
+commit_sha = os.environ['COMMIT_SHA']
 
 class Healthcheck:
     def __init__(self, status, version, uptime, start_time, checks):
         self.status = status
         self.version = {
             "version": version,
-            # "git_commit": self.get_last_commit(),
+            "git_commit": commit_sha,
             "language": "python",
             "language_version": sys.version,
         }
