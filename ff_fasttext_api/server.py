@@ -109,7 +109,7 @@ def create_app():
     start_time = datetime.utcnow().isoformat()
     uptime = time.time()
 
-    health = Healthcheck(status="OK", version='1.0.0', uptime=uptime, start_time=start_time, checks=[])
+    health = Healthcheck(status="OK", version='0.1.0', uptime=uptime, start_time=start_time, checks=[])
     category_manager = load('test_data/wiki.en.fifu')
     logger.info("successfully loaded category manager")
 
