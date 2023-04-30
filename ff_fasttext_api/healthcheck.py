@@ -2,20 +2,20 @@ from datetime import datetime
 import subprocess
 import time
 import sys
-import os
+# import os
 
 # Define the check statuses
 OK = 'OK'
 WARNING = 'WARNING'
 ERROR = 'ERROR'
-commit_sha = os.environ['COMMIT_SHA']
+# commit_sha = os.environ['COMMIT_SHA']
 
 class Healthcheck:
     def __init__(self, status, version, uptime, start_time, checks):
         self.status = status
         self.version = {
             "version": version,
-            "git_commit": commit_sha,
+            # "git_commit": commit_sha,
             "language": "python",
             "language_version": sys.version,
         }
@@ -24,14 +24,11 @@ class Healthcheck:
         self.checks = checks
 
     def to_json(self):
-        now = datetime.utcnow()
-
         response = {
             'status': self.status,
             'version': self.version,
             'uptime': self.get_uptime(self.uptime),
             'start_time': self.start_time,
-            'timestamp': now,
             'checks': self.checks
         }
 
@@ -44,13 +41,15 @@ class Healthcheck:
     def get_uptime(self, start_time):
         uptime = time.time()
         intervals = (
-            ('w', 604800),
-            ('d', 86400),
-            ('h', 3600),
-            ('m', 60),
-            ('s', 1),
+            ('w', 604800000),
+            ('d', 86400000),
+            ('h', 3600000),
+            ('m', 60000),
+            ('s', 1000),
+            ('ms', 1),
+
         )
-        uptime = round(uptime - start_time)
+        uptime = round((uptime - start_time)*1000)
 
         parts = []
         for name, count in intervals:
