@@ -638,6 +638,14 @@ pygments = ">=2.6.0,<3.0.0"
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
+name = "ruff"
+version = "0.0.264"
+description = "An extremely fast Python linter, written in Rust."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -805,7 +813,7 @@ standard = ["websockets (>=10.0)", "httptools (>=0.4.0)", "watchgod (>=0.6)", "p
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.9,<4"
-content-hash = "bb8b0a3c47d13fe8fc499838e37229728b9e0943179b73f24a955caa6b3672c7"
+content-hash = "e4e799c3dc08ff51ea89575acd764566e58e1163607481a6dbd6a5e40f1f01c1"
 
 [metadata.files]
 anyio = []
@@ -860,6 +868,7 @@ pyyaml = []
 regex = []
 requests = []
 rich = []
+ruff = []
 six = []
 sniffio = []
 sortedcontainers = []

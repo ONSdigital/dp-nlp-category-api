@@ -8,3 +8,4 @@ click
 fastapi
 pydantic
 uvicorn
+ruff
