@@ -100,7 +100,7 @@ fmt: deps ## Makes sure dep are installed and formats code
 
 .PHONY: lint
 lint: deps ## Makes sure dep are installed and lints code
-	ruff check .
+	poetry run ruff check .
 
 .PHONY: help
 help: ## Show this help.
