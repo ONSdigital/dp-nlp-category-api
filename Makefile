@@ -100,8 +100,7 @@ fmt: deps ## Makes sure dep are installed and formats code
 
 .PHONY: lint
 lint: deps ## Makes sure dep are installed and lints code
-	poetry run pflake8 ff_fasttext_api
-	poetry run black --check ff_fasttext_api
+	ruff check .
 
 .PHONY: help
 help: ## Show this help.

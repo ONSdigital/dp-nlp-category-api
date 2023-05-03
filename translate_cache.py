@@ -24,7 +24,6 @@ def run():
         for cat, tokens in cache["classifier-bow"]
         for c, w in tokens
     }))
-    text = "parents"
     chunked_translation_words = [
         translation_words[i: i+CHUNK]
         for i in range(0, len(translation_words), CHUNK)

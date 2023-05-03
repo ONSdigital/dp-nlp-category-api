@@ -1,7 +1,4 @@
 import os
-import time
-os.environ['DEBUG_LEVEL_FOR_DYNACONF'] = 'DEBUG'
-
 from fastapi import FastAPI
 from typing import Optional
 from .settings import settings
@@ -9,12 +6,10 @@ from datetime import datetime
 from ff_fasttext_api.healthcheck import Healthcheck
 from bonn.extract import load
 from bonn.utils import filter_by_snr
-from fastapi import FastAPI
-
 from .logger import configure_logging, setup_logger
-from .settings import settings
 
-print("is this start?")
+os.environ['DEBUG_LEVEL_FOR_DYNACONF'] = 'DEBUG'
+
 configure_logging()
 logger = setup_logger(severity=3)
 

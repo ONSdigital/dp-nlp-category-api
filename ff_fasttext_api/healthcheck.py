@@ -33,8 +33,8 @@ class Healthcheck:
         return response
     
     def get_last_commit(self):
-        last_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()
-        return last_commit
+        last_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+        return last_commit.decode('utf-8').strip()
     
     def get_uptime(self):
         uptime = time.time()
