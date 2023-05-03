@@ -9,6 +9,7 @@ WARNING = 'WARNING'
 ERROR = 'ERROR'
 
 class Healthcheck:
+    # TO-DO: update healthcheck with image build time
     def __init__(self, status, version, start_time, checks):
         self.status = status
         self.version = {
