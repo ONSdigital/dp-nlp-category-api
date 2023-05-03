@@ -14,6 +14,7 @@ from fastapi import FastAPI
 from .logger import configure_logging, setup_logger
 from .settings import settings
 
+print("is this start?")
 configure_logging()
 logger = setup_logger(severity=3)
 
@@ -106,11 +107,12 @@ def make_app(category_manager, health_check):
     return app
 
 def create_app():
-    start_time = datetime.utcnow().isoformat()
-    uptime = time.time()
+    start_time = datetime.utcnow().isoformat() # The time the app started in UTC
 
-    health = Healthcheck(status="OK", version='0.1.0', uptime=uptime, start_time=start_time, checks=[])
     category_manager = load('test_data/wiki.en.fifu')
+
+    health = Healthcheck(status="OK", version='0.1.0', start_time=start_time, checks=[])
+
     logger.info("successfully loaded category manager")
 
     app = make_app(category_manager, health)
