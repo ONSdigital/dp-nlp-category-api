@@ -71,6 +71,11 @@ cache/cache-cy.json:
 model: build-dev
 	docker-compose run -e RUST_BACKTRACE=1 --entrypoint poetry ff_fasttext_api run ffp-convert -f textdims ${INPUT_VEC} -t finalfusion ${OUTPUT_FIFU}
 
+.PHONY push-image
+push-image: ## Pushes docker image ff_fasttext_api:latest to flaxandteal/ repo on dockerhub
+	docker tag ff_fasttext_api flaxandteal/ff_fasttext_api:latest
+	docker push flaxandteal/ff_fasttext_api:latest
+
 
 .PHONY: deps
 deps: ## Installs dependencies

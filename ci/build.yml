@@ -3,10 +3,10 @@
 platform: linux
 
 image_resource:
-  type: docker-image
+  type: registry-image
   source:
-    repository: python
-    tag: 3.9.16
+    repository: docker.io/library/docker
+    tag: latest
 
 inputs:
   - name: dp-nlp-category-api
@@ -19,4 +19,4 @@ caches:
   - path: dp-nlp-category-api/.venv/
   
 run:
-  path: dp-nlp-category-api/ci/scripts/build.sh
+  path: dp-nlp-category-api/ci/scripts/build.sh ((username)) ((password))
