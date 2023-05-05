@@ -18,5 +18,9 @@ caches:
   - path: dp-nlp-category-api/.poetry/
   - path: dp-nlp-category-api/.venv/
   
+params:
+  USERNAME: ((username))
+  PASSWORD: ((password))
+
 run:
-  path: dp-nlp-category-api/ci/scripts/build.sh ((username)) ((password))
+  path: dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD
