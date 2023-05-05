@@ -5,8 +5,8 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: docker.io/library/docker:dind
-    tag: latest
+    repository: docker.io/library/docker
+    tag: dind
 
 inputs:
   - name: dp-nlp-category-api
