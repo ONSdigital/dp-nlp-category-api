@@ -30,6 +30,7 @@ run:
       apk add bash
       apk add make
       apk add m4
-      service docker start
+      apk add openrc --no-cache
+      rc-service docker start
       chmod +x dp-nlp-category-api/ci/scripts/build.sh
       ./dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD
