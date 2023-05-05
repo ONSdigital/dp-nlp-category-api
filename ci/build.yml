@@ -5,7 +5,7 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: docker.io/library/docker
+    repository: docker.io/library/docker:dind
     tag: latest
 
 inputs:
@@ -30,7 +30,5 @@ run:
       apk add bash
       apk add make
       apk add m4
-      apk add openrc --no-cache
-      rc-service docker start
       chmod +x dp-nlp-category-api/ci/scripts/build.sh
       ./dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD
