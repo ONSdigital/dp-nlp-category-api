@@ -28,4 +28,5 @@ run:
     - -exc
     - |
       chmod +x dp-nlp-category-api/ci/scripts/build.sh
-      ./dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD
+      cd dp-nlp-category-api/ci/scripts/
+      ./build.sh $USERNAME $PASSWORD
