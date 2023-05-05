@@ -19,8 +19,8 @@ caches:
   - path: dp-nlp-category-api/.venv/
   
 params:
-  USERNAME: ((username))
-  PASSWORD: ((password))
+  USERNAME: default_username
+  PASSWORD: default_password
 
 run:
   path: dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD
