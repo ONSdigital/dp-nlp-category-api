@@ -23,10 +23,13 @@ params:
   PASSWORD: default_password
 
 run:
-  path: sh
+  path: bash
   args:
     - -exc
     - |
       pwd
       ls
-      ./dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD
+      ls dp-nlp-category-api
+      ls dp-nlp-category-api/ci
+      ls dp-nlp-category-api/ci/scripts
+      bash dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD
