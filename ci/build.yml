@@ -27,6 +27,7 @@ run:
   args:
     - -exc
     - |
+      apk add bash
+      apk add make
       chmod +x dp-nlp-category-api/ci/scripts/build.sh
-      cd dp-nlp-category-api/ci/scripts/
-      sh build.sh $USERNAME $PASSWORD
+      ./dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD

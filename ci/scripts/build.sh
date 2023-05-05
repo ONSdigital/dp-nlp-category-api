@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -eux
 
 pushd dp-nlp-category-api
   docker login -u $1 -p $2
