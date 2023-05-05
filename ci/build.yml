@@ -27,9 +27,5 @@ run:
   args:
     - -exc
     - |
-      pwd
-      ls
-      ls dp-nlp-category-api
-      ls dp-nlp-category-api/ci
-      ls dp-nlp-category-api/ci/scripts
-      ./ dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD
+      chmod +x dp-nlp-category-api/ci/scripts/build.sh
+      dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD
