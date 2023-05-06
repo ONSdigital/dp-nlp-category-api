@@ -3,7 +3,7 @@
 
 ## STAGE 1 - Core package(s)
 
-FROM ff_fasttext_build:latest as ff
+FROM flaxandteal/ff_fasttext_build:latest as ff
 
 RUN maturin build
 
