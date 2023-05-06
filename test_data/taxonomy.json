@@ -1,0 +1,112 @@
+{
+  "topics": [
+    {
+      "title": "Business, industry and trade",
+      "filterable_title": "businessindustryandtrade",
+      "child_topics": [
+        {
+          "title": "Business",
+          "filterable_title": "business",
+          "child_topics": [
+            {
+              "title": "Actions",
+              "filterable_title": "actions"
+            },
+            {
+              "title": "Building, and maintenance",
+              "filterable_title": "buildingandmaintenance"
+            },
+            {
+              "title": "Commercialization",
+              "filterable_title": "commercialization"
+            }
+          ]
+        },
+        {
+          "title": "Changes to business",
+          "filterable_title": "changestobusiness",
+          "child_topics": [
+            {
+              "title": "Ups/downs",
+              "filterable_title": "upsdowns"
+            },
+            {
+              "title": "Lefts & Rights",
+              "filterable_title": "leftsrights"
+            },
+            {
+              "title": "Open and shut",
+              "filterable_title": "openandshut"
+            }
+          ]
+        },
+        {
+          "title": "Construction industry",
+          "filterable_title": "constructionindustry"
+        },
+        {
+          "title": "International trade",
+          "filterable_title": "internationaltrade"
+        },
+        {
+          "title": "IT and internet industry",
+          "filterable_title": "itandinternetindustry"
+        },
+        {
+          "title": "Manufacturing and production industry",
+          "filterable_title": "manufacturingandproductionindustry"
+        },
+        {
+          "title": "Retail industry",
+          "filterable_title": "retailindustry"
+        },
+        {
+          "title": "Tourism industry",
+          "filterable_title": "tourismindustry"
+        }
+      ]
+    },
+    {
+      "title": "Economy",
+      "filterable_title": "economy",
+      "child_topics": [
+        {
+          "title": "Foo Bar",
+          "filterable_title": "foobar",
+          "child_topics": [
+            {
+              "title": "Baz",
+              "filterable_title": "baz"
+            },
+            {
+              "title": "B i f",
+              "filterable_title": "bif"
+            },
+            {
+              "title": "Boz",
+              "filterable_title": "boz"
+            }
+          ]
+        },
+        {
+          "title": "Fizz",
+          "filterable_title": "fizz"
+        },
+        {
+          "title": "Fizz Buzz",
+          "filterable_title": "fizzbuzz",
+          "child_topics": [
+            {
+              "title": "frump",
+              "filterable_title": "frump"
+            },
+            {
+              "title": "flim flam",
+              "filterable_title": "flimflam"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

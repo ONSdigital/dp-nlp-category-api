@@ -3,7 +3,7 @@
 /core/ff_fasttext/*.so
 __pycache__
 *.egg-info
-/taxonomy.json
+/taxonomy.json.example
 Dockerfile
 *.whl
 *.tar.gz
