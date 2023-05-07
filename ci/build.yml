@@ -5,31 +5,21 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: docker.io/library/docker
-    tag: dind
+    repository: concourse/oci-build-task
 
 inputs:
-  - name: dp-nlp-category-api
+- name: dp-nlp-category-api
 
 outputs:
-  - name: build
+- name: image
 
 caches:
   - path: dp-nlp-category-api/.poetry/
   - path: dp-nlp-category-api/.venv/
   
 params:
-  USERNAME: default_username
-  PASSWORD: default_password
+  CONTEXT: dp-nlp-category-api/
+  DOCKERFILE: dp-nlp-category-api/Dockerfile.in
 
 run:
-  path: sh
-  args:
-    - -exc
-    - |
-      apk add bash
-      apk add make
-      apk add m4
-      apk add docker
-      chmod +x dp-nlp-category-api/ci/scripts/build.sh
-      ./dp-nlp-category-api/ci/scripts/build.sh $USERNAME $PASSWORD
+  path: build
