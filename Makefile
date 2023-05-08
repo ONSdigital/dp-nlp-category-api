@@ -20,8 +20,7 @@ all: build ##
 
 .PHONY: audit
 audit: deps ## Makes sure dep are installed and audits code for vulnerable dependencies
-	pip install safety
-	safety check
+	poetry run safety check
 
 .PHONY: build
 build: Dockerfile ## Creates a Dockerfile from Dockerfile.in if non exists, then builds docker image - name: ff_fasttext_api:latest
