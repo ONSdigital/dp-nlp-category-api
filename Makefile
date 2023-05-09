@@ -14,12 +14,17 @@ RESET  := $(shell tput -Txterm sgr0)
 EXISTS_POETRY := $(shell command -v poetry 2> /dev/null)
 EXISTS_FLASK := $(shell command -v uvicorn 2> /dev/null)
 
+BUILD_TIME=$(shell date +%s)
+GIT_COMMIT=$(shell git rev-parse HEAD)
+VERSION ?= $(shell git tag --points-at HEAD | grep ^v | head -n 1)
 
 .PHONY: all
-all: build ## 
+all: delimiter-AUDIT audit delimiter-LINTERS lint delimiter-UNIT-TESTS test-unit delimiter-COMPONENT_TESTS test-component delimiter-FINISH ## Runs multiple targets, audit, lint, test and test-component
 
 .PHONY: audit
 audit: deps ## Makes sure dep are installed and audits code for vulnerable dependencies
+	echo ${GIT_COMMIT}
+	echo ${BUILD_TIME}
 	poetry run safety check
 
 .PHONY: build
@@ -34,8 +39,43 @@ build-bin: deps  ## Builds a binary file called
 build-dev: Dockerfile ## Runs docker-compose build
 	docker-compose build
 
+cache/cache-cy.json:
+	python translate_cache.py
+
+.PHONY: deps
+deps: ## Installs dependencies
+	@if [ -z "$(EXISTS_FLASK)" ]; then \
+	if [ -z "$(EXISTS_POETRY)" ]; then \
+		pip -qq install poetry; \
+		poetry config virtualenvs.in-project true; \
+	fi; \
+		poetry install --quiet || poetry install; \
+	fi; \
+
 Dockerfile: ## Creates a dockerfile from Dockerfile.in using m4 (m4 must be installed)
 	m4 Dockerfile.in > Dockerfile
+
+.PHONY: delimiter-%
+delimiter-%:
+	@echo '===================${GREEN} $* ${RESET}==================='
+
+.PHONY: fmt
+fmt: deps ## Makes sure dep are installed and formats code
+	poetry run isort ff_fasttext_api
+	poetry run black ff_fasttext_api
+
+.PHONY: lint
+lint: deps ## Makes sure dep are installed and lints code
+	poetry run ruff check .
+
+.PHONY: model
+model: build-dev
+	docker-compose run -e RUST_BACKTRACE=1 --entrypoint poetry ff_fasttext_api run ffp-convert -f textdims ${INPUT_VEC} -t finalfusion ${OUTPUT_FIFU}
+
+.PHONY: push-image
+push-image: ## Pushes docker image ff_fasttext_api:latest to flaxandteal/ repo on dockerhub
+	docker tag ff_fasttext_api flaxandteal/ff_fasttext_api:latest
+	docker push flaxandteal/ff_fasttext_api:latest
 
 .PHONY: run_dc 
 run_dc: build-dev test_data/wiki.en.fifu ## Builds docker-compose, downloads fifu data and then runs docker-compose up 
@@ -62,49 +102,16 @@ test_data/cc.cy.300.fifu: ## Downloads/Updates cc.cy.300.fifu data inside test_d
 	gunzip test_data/cc.cy.300.vec.gz
 	@$(MAKE) model INPUT_VEC=test_data/cc.cy.300.vec OUTPUT_FIFU=test_data/cc.cy.300.fifu
 
-cache/cache-cy.json:
-	python translate_cache.py
-
-
-.PHONY: model
-model: build-dev
-	docker-compose run -e RUST_BACKTRACE=1 --entrypoint poetry ff_fasttext_api run ffp-convert -f textdims ${INPUT_VEC} -t finalfusion ${OUTPUT_FIFU}
-
-.PHONY: push-image
-push-image: ## Pushes docker image ff_fasttext_api:latest to flaxandteal/ repo on dockerhub
-	docker tag ff_fasttext_api flaxandteal/ff_fasttext_api:latest
-	docker push flaxandteal/ff_fasttext_api:latest
-
-
-.PHONY: deps
-deps: ## Installs dependencies
-	@if [ -z "$(EXISTS_FLASK)" ]; then \
-	if [ -z "$(EXISTS_POETRY)" ]; then \
-		pip -qq install poetry; \
-		poetry config virtualenvs.in-project true; \
-	fi; \
-		poetry install --quiet || poetry install; \
-	fi; \
+.PHONY: test ## Makes sure dep are installed and runs all tests
+test: unit test-component
 
 .PHONY: test-component
 test-component: deps ## Makes sure dep are installed and runs component tests
 	poetry run pytest tests/api
 
-.PHONY: unit
+.PHONY: test-unit
 unit: deps ## Makes sure dep are installed and runs unit tests
 	poetry run pytest tests/unit
-
-.PHONY: test ## Makes sure dep are installed and runs all tests
-test: unit test-component
-
-.PHONY: fmt
-fmt: deps ## Makes sure dep are installed and formats code
-	poetry run isort ff_fasttext_api
-	poetry run black ff_fasttext_api
-
-.PHONY: lint
-lint: deps ## Makes sure dep are installed and lints code
-	poetry run ruff check .
 
 .PHONY: help
 help: ## Show this help.

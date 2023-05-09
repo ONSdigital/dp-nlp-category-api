@@ -19,6 +19,8 @@ def make_app(category_manager, health_check):
     DUMMY_RUN = settings.get("DUMMY_RUN", os.getenv("FF_FASTTEXT_DUMMY_RUN", "") == "1")
     THRESHOLD = settings.get("THRESHOLD", 0.4)
 
+    health_check.set_start_time()
+
     @app.get("/categories/{cat}")
     def get_category(cat: str, query: str):
         try:
@@ -102,11 +104,13 @@ def make_app(category_manager, health_check):
     return app
 
 def create_app():
-    start_time = datetime.utcnow().isoformat() # The time the app started in UTC
+    build_time = datetime.datetime.now()
+
+    formatted_time = build_time.strftime('%Y-%m-%dT%H:%M:%S%z')
 
     category_manager = load('test_data/wiki.en.fifu')
 
-    health = Healthcheck(status="OK", version='0.1.0', start_time=start_time, checks=[])
+    health = Healthcheck(status="OK", version='0.1.0', build_time=formatted_time, checks=[])
 
     logger.info("successfully loaded category manager")
 
