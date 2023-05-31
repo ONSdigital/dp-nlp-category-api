@@ -104,13 +104,9 @@ def make_app(category_manager, health_check):
     return app
 
 def create_app():
-    build_time = datetime.datetime.now()
-
-    formatted_time = build_time.strftime('%Y-%m-%dT%H:%M:%S%z')
-
     category_manager = load('test_data/wiki.en.fifu')
 
-    health = Healthcheck(status="OK", version='0.1.0', build_time=formatted_time, checks=[])
+    health = Healthcheck(status="OK", checks=[])
 
     logger.info("successfully loaded category manager")
 
