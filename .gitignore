@@ -1,17 +1,27 @@
-/target
-/core/target
-/core/ff_fasttext/*.so
+# Environments
+.env
+
+# Editors
+.vscode
+.idea
+
+# Caches
 __pycache__
+.mypy_cache
+/cache.json
+.pytest_cache
+.ruff_cache
+
+# Project generated files and directories
 *.egg-info
-/taxonomy.json.example
 Dockerfile
 *.whl
 *.tar.gz
-.mypy_cache
-.idea
-/cache.json
-.env
-.vscode
-.pytest_cache
 /data
 /dist
+
+# Example data 
+/taxonomy.json.example
+
+# Ignore dynaconf secret files
+.secrets.*

@@ -14,12 +14,12 @@ RESET  := $(shell tput -Txterm sgr0)
 EXISTS_POETRY := $(shell command -v poetry 2> /dev/null)
 EXISTS_FLASK := $(shell command -v uvicorn 2> /dev/null)
 
-CATEGORY_API_PORT ?= 28800
-CATEGORY_API_HOST ?= 0.0.0.0
+export FF_FASTTEXT_API_CATEGORY_API_PORT ?= 28800
+export FF_FASTTEXT_API_CATEGORY_API_HOST ?= 0.0.0.0
 
-BUILD_TIME=$(shell date +%s)
-GIT_COMMIT=$(shell git rev-parse HEAD)
-VERSION ?= $(shell git tag --points-at HEAD | grep ^v | head -n 1)
+export FF_FASTTEXT_API_START_TIME = $(shell date +%s)
+export FF_FASTTEXT_API_GIT_COMMIT ?= $(shell git rev-parse HEAD)
+export FF_FASTTEXT_API_VERSION ?= $(shell git tag --points-at HEAD | grep ^v | head -n 1)
 
 
 .PHONY: all audit build build-bin build-dev deps delimiter fmt lint model run-container run test test-component test-unit help
@@ -66,8 +66,8 @@ lint: deps ## Makes sure dep are installed and lints code
 model: build-dev
 	docker-compose run -e RUST_BACKTRACE=1 --entrypoint poetry ff_fasttext_api run ffp-convert -f textdims ${INPUT_VEC} -t finalfusion ${OUTPUT_FIFU}
 
-run: ## Runs category api locally using poetry uvicorn port: 3003
-	poetry run uvicorn ff_fasttext_api.server:create_app --host ${CATEGORY_API_HOST} --port ${CATEGORY_API_PORT}
+run: ## Runs category api locally using poetry uvicorn port: 28800
+	poetry run uvicorn api:app --host ${FF_FASTTEXT_API_CATEGORY_API_HOST} --port ${FF_FASTTEXT_API_CATEGORY_API_PORT}
 
 run-container: build test_data/wiki.en.fifu ## Builds docker container, downloads fifu data and then runs docker container
 	docker run --network=host ff_fasttext_api

@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI
 from typing import Optional
-from .settings import settings
+from config import FIFU_FILE, DUMMY_RUN, THRESHOLD
 from datetime import datetime
 from ff_fasttext_api.healthcheck import Healthcheck
 from bonn.extract import load
@@ -11,15 +11,10 @@ from .logger import configure_logging, setup_logger
 os.environ['DEBUG_LEVEL_FOR_DYNACONF'] = 'DEBUG'
 
 configure_logging()
-logger = setup_logger(severity=3)
+logger = setup_logger()
 
 def make_app(category_manager, health_check):
     app = FastAPI()
-
-    DUMMY_RUN = settings.get("DUMMY_RUN", os.getenv("FF_FASTTEXT_DUMMY_RUN", "") == "1")
-    THRESHOLD = settings.get("THRESHOLD", 0.4)
-
-    health_check.set_start_time()
 
     @app.get("/categories/{cat}")
     def get_category(cat: str, query: str):
@@ -104,7 +99,7 @@ def make_app(category_manager, health_check):
     return app
 
 def create_app():
-    category_manager = load('test_data/wiki.en.fifu')
+    category_manager = load(FIFU_FILE)
 
     health = Healthcheck(status="OK", checks=[])
 

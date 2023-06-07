@@ -13,9 +13,8 @@ def configure_logging():
         logger_factory=structlog.stdlib.LoggerFactory(),
     )
 
-def setup_logger(severity):
+def setup_logger():
     return structlog.get_logger(
         namespace="ff_fasttext_api",
         created_at=datetime.utcnow().isoformat(),
-        severity=severity,
     )
