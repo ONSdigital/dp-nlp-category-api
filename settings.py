@@ -1,13 +1,12 @@
 from dynaconf import Dynaconf
 
 settings = Dynaconf(
-    DEBUG_LEVEL_FOR_DYNACONF="DEBUG",
-    ENVVAR_PREFIX_FOR_DYNACONF="FF_FASTTEXT_API",
     envvar_prefix="FF_FASTTEXT_API",
     load_dotenv=True, 
 )
 
 settings.reload()
+
 PORT = settings.get("CATEGORY_API_PORT", 28800)
 HOST = settings.get("CATEGORY_API_HOST", "0.0.0.0")
 

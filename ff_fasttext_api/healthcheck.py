@@ -1,4 +1,4 @@
-from config import VERSION, GIT_COMMIT, START_TIME
+from settings import VERSION, GIT_COMMIT, START_TIME
 import sys
 import time
 from datetime import datetime

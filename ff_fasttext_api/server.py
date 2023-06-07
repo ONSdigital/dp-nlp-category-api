@@ -1,16 +1,10 @@
-import os
 from fastapi import FastAPI
 from typing import Optional
-from config import FIFU_FILE, DUMMY_RUN, THRESHOLD
+from settings import FIFU_FILE, DUMMY_RUN, THRESHOLD
 from ff_fasttext_api.healthcheck import Healthcheck
 from bonn.extract import load
 from bonn.utils import filter_by_snr
-from .logger import configure_logging, setup_logger
-
-os.environ['DEBUG_LEVEL_FOR_DYNACONF'] = 'DEBUG'
-
-configure_logging()
-logger = setup_logger()
+from .logger import logger
 
 def make_app(category_manager, health_check):
     app = FastAPI()
@@ -32,8 +26,9 @@ def make_app(category_manager, health_check):
         except Exception as e:
             logger.error(
                 event="category testing failed",
-                exception=str(e),
+                exception=e,
                 query=query,
+                category=cat
             )
             return {
                 "message": "Internal Server Error",
@@ -75,7 +70,7 @@ def make_app(category_manager, health_check):
 
             if snr is not None:
                 categories = filter_by_snr(categories, snr)
-                logger.debug("successfully filtered categories by SNR", snr=snr)
+                logger.info("successfully filtered categories by SNR", snr=snr)
         except Exception as e:
             logger.error(
                 event="testing and filtration of categories failed",
@@ -102,7 +97,7 @@ def create_app():
 
     health = Healthcheck(status="OK", checks=[])
 
-    logger.info("successfully loaded category manager")
+    logger.info(event="successfully loaded category manager")
 
     app = make_app(category_manager, health)
 

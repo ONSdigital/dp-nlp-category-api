@@ -9,7 +9,32 @@ info:
 schemes:
   - http
 paths:
-  /berlin/search:
+  /category:
+    get:
+      summary: match queries on the ONS Website to groupings in the ONS taxonomy
+      description: Returns matches and categorises them into groups with a score based on relevancy 
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: cat
+          required: true
+          type: "string"
+          description: "Cateory to search for"
+        - in: query
+          name: query
+          required: false
+          type: "string"
+          description: query word for that category
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/categoryResponse"
+        500:
+          $ref: '#/responses/InternalError'
+          
+  /categories:
     get:
       summary: match queries on the ONS Website to groupings in the ONS taxonomy
       description: Returns matches and categorises them into groups with a score based on relevancy 
@@ -18,32 +43,26 @@ paths:
       parameters:
         - in: query
           name: query
-          description: "The query string to search data by"
           required: true
           type: "string"
+          description: "The query string to search data by"
         - in: query
-          type: "integer"
-          required: false
           name: snr
+          required: false
+          type: "integer"
           description: signal to noise ratio, how much, above the average, is a score considered a hit
       responses:
         200:
           description: OK
           schema:
-            $ref: "#/definitions/matches"
+            $ref: "#/definitions/categoriesResponse"
           examples:
             application/json:
               matches:
-                - encoding: "UN-LOCODE"
-                  id: "ca:lod"
-                  key: "UN-LOCODE-ca:lod"
-                  words:
-                    - "london"
-                - encoding:	"UN-LOCODE"
-                  id:	"us:ldn"
-                  key:	"UN-LOCODE-us:ldn"
-                  words:	
-                    -	"london"
+                - s: 27
+                  c: pharmacuticalcompanies
+                - s: 31
+                  c: dentalcare
         500:
           $ref: '#/responses/InternalError'
 
@@ -70,23 +89,43 @@ responses:
     description: "Failed to process the request due to an internal error"
 
 definitions:
-  :
+  categoriesResponse:
     type: "array"
     items:
-        $ref: "#/definitions/location_codes"
-  location_codes:
-    type: "object"
-    properties:
-      encoding:
-        type: "string"
-      id:
-        type: "string"
-      key:
-        type: "string"
-      words:
-        type: "array"
-        items: 
+      properties:
+        s:
           type: "string"
+        c:
+          type: "string"
+          
+  categoryResponse:
+    type: "array"
+    items:
+      properties:
+        weightings:
+          type: "object"
+          properties:
+            w:
+              type: array
+              items:
+                type: "string"
+        scoring:
+          type: object
+          properties:
+            w:
+              type: object
+              properties:
+                overall:
+                  type: number
+                vector:
+                  type: number
+                significance:
+                  type: number
+                by-classifier:
+                  type: array
+                  items: 
+                    type: number
+
   Health:
     type: object
     properties:

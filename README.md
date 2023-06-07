@@ -2,9 +2,31 @@
 
 NLP Category-Matching API
 
-A Rust microservice to match queries on the ONS Website to groupings in the ONS taxonomy
+A Python microservice to wrap the Bonn package to match queries on the ONS Website to groupings in the ONS taxonomy.
 
 ### Getting started
+
+### Configuration
+
+| Environment variable                        | Default                    | Description
+| ----------------------------                | ---------                  | -----------
+| FF_FASTTEXT_API_CATEGORY_API_HOST           | 0.0.0.0                    | Host
+| FF_FASTTEXT_API_CATEGORY_API_PORT           | 28800                      | Port that the API is listening on
+| FF_FASTTEXT_API_DUMMY_RUN                   | false                      | Returns empty list for testing purposes
+| FF_FASTTEXT_API_DEBUG_LEVEL_FOR_DYNACONF    | "DEBUG"                    | Verbosity of dynaconf internal logging
+| FF_FASTTEXT_API_ENVVAR_PREFIX_FOR_DYNACONF  | "FF_FASTTEXT_API"          | The prefix of which variables to be taken into dynaconf configuration
+| FF_FASTTEXT_API_FIFU_FILE                   | "test_data/wiki.en.fifu"   | The location of the final fusion file
+| FF_FASTTEXT_API_THRESHOLD                   | 0.4                        | Threshold of what's considered a low-scoring category
+| --------core variables------------          | ---------                  | -----------
+| FF_FASTTEXT_CORE_CACHE_TARGET               | "cache.json"               | Cache target
+| FF_FASTTEXT_CORE_ELASTICSEARCH_HOST         | "http://localhost:9200"    | Elasticsearch host
+| FF_FASTTEXT_CORE_REBUILD_CACHE              | true                       | Should cache be rebuild
+| FF_FASTTEXT_CORE_TAXONOMY_LOCATION          | "taxonomy.json"            | Location of taxonomy 
+| FF_FASTTEXT_CORE_WEIGHTING__C               | 1                          | Word vectors based on the words in the category name
+| FF_FASTTEXT_CORE_WEIGHTING__SC              | 2                          | Word vectors based on the words in the sub-categories name
+| FF_FASTTEXT_CORE_WEIGHTING__SSC             | 2                          | Word vectors based on the words in the sub-sub-categories name
+| FF_FASTTEXT_CORE_WEIGHTING__WC              | 6                          | Based on a bag of words found in the metadata of the datasets found in the categories
+| FF_FASTTEXT_CORE_WEIGHTING__WSSC            | 8                          | Based on a bag of words found in the metadata of the datasets found in the sub-sub-categories
 
 #### Set up taxonomy.json
 
@@ -15,7 +37,7 @@ This should be obtained from ONS and placed in the root directory.
 These are most simply sourced as [pretrained fifu models](https://finalfusion.github.io/pretrained), but can be dynamically generated
 using the embedded FinalFusion libraries.
 
-To build and run the API using docker:
+To build and run the API locally:
 
 ```
 make run
