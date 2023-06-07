@@ -4,7 +4,7 @@ from bonn.extract import load
 from ff_fasttext_api.logger import configure_logging, setup_logger
 
 configure_logging()
-logger = setup_logger(severity=0)
+logger = setup_logger()
 
 
 @click.command()

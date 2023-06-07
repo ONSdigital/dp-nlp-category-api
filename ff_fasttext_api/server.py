@@ -2,7 +2,6 @@ import os
 from fastapi import FastAPI
 from typing import Optional
 from config import FIFU_FILE, DUMMY_RUN, THRESHOLD
-from datetime import datetime
 from ff_fasttext_api.healthcheck import Healthcheck
 from bonn.extract import load
 from bonn.utils import filter_by_snr
