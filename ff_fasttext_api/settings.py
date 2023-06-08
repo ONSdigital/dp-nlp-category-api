@@ -1,4 +1,8 @@
 from dynaconf import Dynaconf
+import time
+
+current_time = int(time.time())
+print(current_time)
 
 settings = Dynaconf(
     envvar_prefix="FF_FASTTEXT_API",
@@ -19,5 +23,5 @@ THRESHOLD = settings.get("THRESHOLD", 0.4)
 
 # VERSION = settings.get("VERSION", "0.1.0")
 VERSION = "0.1.0"
-START_TIME = settings.get("START_TIME")
+START_TIME = settings.get("START_TIME", current_time)
 GIT_COMMIT = settings.get("GIT_COMMIT")

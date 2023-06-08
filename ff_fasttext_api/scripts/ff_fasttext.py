@@ -1,6 +1,6 @@
 import click
 from bonn.extract import load
-from settings import FIFU_FILE
+from ff_fasttext_api.settings import FIFU_FILE
 
 from ff_fasttext_api.logger import logger
 

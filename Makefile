@@ -32,6 +32,12 @@ audit: deps ## Makes sure dep are installed and audits code for vulnerable depen
 build: ## Builds docker image - name: ff_fasttext_api:latest
 	docker build --build-arg HOST=${FF_FASTTEXT_API_CATEGORY_API_HOST} --build-arg PORT=${FF_FASTTEXT_API_CATEGORY_API_PORT} -t ff_fasttext_api:latest .
 
+build-concourse:
+	docker build --no-cache -f Dockerfile.concourse -t category:latest .
+
+run-concourse: 
+	docker run -e START_TIME=${FF_FASTTEXT_API_START_TIME} -ti category:latest
+
 build-bin: deps  ## Builds a binary file called 
 	poetry build
 
@@ -60,7 +66,7 @@ lint: deps ## Makes sure dep are installed and lints code
 model: build-dev
 	docker-compose run -e RUST_BACKTRACE=1 --entrypoint poetry ff_fasttext_api run ffp-convert -f textdims ${INPUT_VEC} -t finalfusion ${OUTPUT_FIFU}
 
-run: deps ## Runs category api locally using poetry uvicorn port: 28800
+run:docker-compose run -e RUST_BACKTRACE=1 --entrypoint poetry ff_fasttext_a deps ## Runs category api locally using poetry uvicorn port: 28800
 	poetry run uvicorn api:app --host ${FF_FASTTEXT_API_CATEGORY_API_HOST} --port ${FF_FASTTEXT_API_CATEGORY_API_PORT}
 
 run-container: build test_data/wiki.en.fifu ## Builds docker container, downloads fifu data and then runs docker container

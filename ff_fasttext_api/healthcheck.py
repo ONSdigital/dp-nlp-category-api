@@ -1,4 +1,4 @@
-from settings import VERSION, GIT_COMMIT, START_TIME
+from ff_fasttext_api.settings import VERSION, GIT_COMMIT, START_TIME
 import sys
 import time
 from datetime import datetime
