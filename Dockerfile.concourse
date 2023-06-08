@@ -1,0 +1,14 @@
+FROM python:3.9
+
+RUN mkdir test_data
+COPY test_data test_data/
+
+COPY .env .
+COPY dist/ff_fasttext_api-0.1.0-py3-none-any.whl .
+
+RUN pip install ff_fasttext_api-0.1.0-py3-none-any.whl
+
+EXPOSE 5000
+
+CMD ["python", "-m", "ff_fasttext_api.main.api"]
+

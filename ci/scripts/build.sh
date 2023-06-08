@@ -1,7 +1,10 @@
 #!/bin/bash -eux
 
+cwd=$(pwd)
+
 pushd dp-nlp-category-api
-  make build
-  docker login -u $1 -p $2
-  make push-image
+  make build-bin
+  mv dist/ $cwd/build
+  mv test_data $cwd/build
+  cp Dockerfile.concourse $cwd/build
 popd

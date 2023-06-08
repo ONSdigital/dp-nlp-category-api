@@ -1,25 +1,13 @@
-import os
 from fastapi import FastAPI
 from typing import Optional
-from .settings import settings
-from datetime import datetime
+from ff_fasttext_api.settings import FIFU_FILE, DUMMY_RUN, THRESHOLD
 from ff_fasttext_api.healthcheck import Healthcheck
 from bonn.extract import load
 from bonn.utils import filter_by_snr
-from .logger import configure_logging, setup_logger
-
-os.environ['DEBUG_LEVEL_FOR_DYNACONF'] = 'DEBUG'
-
-configure_logging()
-logger = setup_logger(severity=3)
+from .logger import logger
 
 def make_app(category_manager, health_check):
     app = FastAPI()
-
-    DUMMY_RUN = settings.get("DUMMY_RUN", os.getenv("FF_FASTTEXT_DUMMY_RUN", "") == "1")
-    THRESHOLD = settings.get("THRESHOLD", 0.4)
-
-    health_check.set_start_time()
 
     @app.get("/categories/{cat}")
     def get_category(cat: str, query: str):
@@ -38,8 +26,9 @@ def make_app(category_manager, health_check):
         except Exception as e:
             logger.error(
                 event="category testing failed",
-                exception=str(e),
+                exception=e,
                 query=query,
+                category=cat
             )
             return {
                 "message": "Internal Server Error",
@@ -81,7 +70,7 @@ def make_app(category_manager, health_check):
 
             if snr is not None:
                 categories = filter_by_snr(categories, snr)
-                logger.debug("successfully filtered categories by SNR", snr=snr)
+                logger.info("successfully filtered categories by SNR", snr=snr)
         except Exception as e:
             logger.error(
                 event="testing and filtration of categories failed",
@@ -104,15 +93,11 @@ def make_app(category_manager, health_check):
     return app
 
 def create_app():
-    build_time = datetime.datetime.now()
+    category_manager = load(FIFU_FILE)
 
-    formatted_time = build_time.strftime('%Y-%m-%dT%H:%M:%S%z')
+    health = Healthcheck(status="OK", checks=[])
 
-    category_manager = load('test_data/wiki.en.fifu')
-
-    health = Healthcheck(status="OK", version='0.1.0', build_time=formatted_time, checks=[])
-
-    logger.info("successfully loaded category manager")
+    logger.info(event="successfully loaded category manager")
 
     app = make_app(category_manager, health)
 

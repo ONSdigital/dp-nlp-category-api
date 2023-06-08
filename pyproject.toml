@@ -5,7 +5,7 @@ max-line-length = 120
 
 [tool.poetry]
 name = "ff_fasttext_api"
-version = "0.0.1"
+version = "0.1.0"
 description = "Created for ONS. API/CLI wrapper for proof-of-concept mmap'd Rust word2vec implementation linked with category matching"
 license = "MIT"
 authors = [

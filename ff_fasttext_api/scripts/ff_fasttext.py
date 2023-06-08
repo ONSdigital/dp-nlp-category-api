@@ -1,16 +1,13 @@
 import click
 from bonn.extract import load
+from ff_fasttext_api.settings import FIFU_FILE
 
-from ff_fasttext_api.logger import configure_logging, setup_logger
-
-configure_logging()
-logger = setup_logger(severity=0)
-
+from ff_fasttext_api.logger import logger
 
 @click.command()
 def main():
     try:
-        category_manager = load("test_data/wiki.en.fifu")
+        category_manager = load(FIFU_FILE)
         logger.info(event="Category manager loaded successfully")
     except Exception as e:
         logger.error(event="Failed to load category manager", error=str(e), severity=1)

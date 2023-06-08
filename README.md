@@ -2,9 +2,46 @@
 
 NLP Category-Matching API
 
-A Rust microservice to match queries on the ONS Website to groupings in the ONS taxonomy
+A Python microservice to wrap the Bonn package to match queries on the ONS Website to groupings in the ONS taxonomy.
 
 ### Getting started
+
+### Available scripts
+
+- `make help` - Displays a help menu with available `make` scripts
+- `make all` - Runs audit test and build commands
+- `make audit` - Audits and finds vulnerable dependencies
+- `make build` - Builds ./Dockerfile image name: ff_fasttext_api
+- `make build-bin` - Build a wheel file in folder dist/
+- `make fmt` - Formats the code using go fmt and go vet
+- `make lint` - Automated checking of your source code for programmatic and stylistic errors
+- `make run` - Runs the app locally
+- `make run-container` - Runs make deps -> make build -> runs the container
+- `make test` - Makes sure dep are installed and runs all tests
+- `make test-component` - Makes sure dep are installed and runs component tests
+- `make deps` - Installs dependencies
+
+### Configuration
+
+| Environment variable                        | Default                    | Description
+| ----------------------------                | ---------                  | -----------
+| FF_FASTTEXT_API_CATEGORY_API_HOST           | 0.0.0.0                    | Host
+| FF_FASTTEXT_API_CATEGORY_API_PORT           | 28800                      | Port that the API is listening on
+| FF_FASTTEXT_API_DUMMY_RUN                   | false                      | Returns empty list for testing purposes
+| FF_FASTTEXT_API_DEBUG_LEVEL_FOR_DYNACONF    | "DEBUG"                    | Verbosity of dynaconf internal logging
+| FF_FASTTEXT_API_ENVVAR_PREFIX_FOR_DYNACONF  | "FF_FASTTEXT_API"          | The prefix of which variables to be taken into dynaconf configuration
+| FF_FASTTEXT_API_FIFU_FILE                   | "test_data/wiki.en.fifu"   | The location of the final fusion file
+| FF_FASTTEXT_API_THRESHOLD                   | 0.4                        | Threshold of what's considered a low-scoring category
+| --------core variables------------          | ---------                  | -----------
+| FF_FASTTEXT_CORE_CACHE_TARGET               | "cache.json"               | Cache target
+| FF_FASTTEXT_CORE_ELASTICSEARCH_HOST         | "http://localhost:9200"    | Elasticsearch host
+| FF_FASTTEXT_CORE_REBUILD_CACHE              | true                       | Should cache be rebuild
+| FF_FASTTEXT_CORE_TAXONOMY_LOCATION          | "taxonomy.json"            | Location of taxonomy 
+| FF_FASTTEXT_CORE_WEIGHTING__C               | 1                          | Word vectors based on the words in the category name
+| FF_FASTTEXT_CORE_WEIGHTING__SC              | 2                          | Word vectors based on the words in the sub-categories name
+| FF_FASTTEXT_CORE_WEIGHTING__SSC             | 2                          | Word vectors based on the words in the sub-sub-categories name
+| FF_FASTTEXT_CORE_WEIGHTING__WC              | 6                          | Based on a bag of words found in the metadata of the datasets found in the categories
+| FF_FASTTEXT_CORE_WEIGHTING__WSSC            | 8                          | Based on a bag of words found in the metadata of the datasets found in the sub-sub-categories
 
 #### Set up taxonomy.json
 
@@ -15,22 +52,16 @@ This should be obtained from ONS and placed in the root directory.
 These are most simply sourced as [pretrained fifu models](https://finalfusion.github.io/pretrained), but can be dynamically generated
 using the embedded FinalFusion libraries.
 
-To build and run the API using docker:
+To build and run the API locally:
 
 ```
 make run
 ```
 
-or, for Welsh,
+To build and run the API in docker:
 
 ```
-make run-cy
-```
-
-To build wheels for distribution, use:
-
-```
-make wheels
+make run-container
 ```
 
 ### Manual building
@@ -39,69 +70,12 @@ make wheels
 
 1. setup .env file - `$ cp .env.local .env` 
 
-2. make wheels
+1. Make sure elasticsearch is running on this host FF_FASTTEXT_CORE_ELASTICSEARCH_HOST
 
-3. you need `m4` in order to generate the local dockerfile - `sudo apt-get m4` or equivalent 
+1. Run make script
 
-4. example `CONTAINER_IMAGE, IMAGE_LATEST_TAG, IMAGE_SHA_TAG` are provided in the Makefile,
 ```
-CONTAINER_IMAGE: $CI_REGISTRY_IMAGE:build-$CI_PIPELINE_ID
-IMAGE_LATEST_TAG: $CI_REGISTRY_IMAGE:latest
-IMAGE_SHA_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA 
-```
-This is how they're created, make sure you've got the latest tags.
-
-5. `make build` will generate a dockerfile and build it.
-
-6.  make sure you've placed taxonomy.json in the root folder (This should be obtained from ONS).
-
-7. you need an elasticsearch container forwarded to port:9200 (you can customize the port in .env) with a specific dump (also provided by ONS) `https://gitlab.com/flaxandteal/onyx/dp-search-api` in this readme you can checkout how to setup elasticsearch. 
-If you have access to f&t `gke_everything-219816_europe-west2-a_everything-1` cluster you can go
-
-```shell
-kubectl -n fat-ony-dev get pods
-kubectl -n fat-ony-dev port-forward elasticsearch-master-0 9200:9200
-```
-elasticsearch-master-0 is the pod name at the time of writing.
-
-<br><br>8. make run - will build everything, and run it on :80
-
-#### Docker-compose setup
-
-1. For now you'll have to set up all of the projects to running stage. To do that go through all of the readme's.
-2. after everything is setup, you can start the whole alpha project with all of the included microservices 1using `docker-compose up`  
-
-
-#### Install finalfusion utils
-
-``` bash
-cd core
-RUSTFLAGS="-C link-args=-lcblas -llapack" cargo install finalfusion-utils --features=opq
-```
-
-#### Optional: Convert the model to quantized fifu format
-
-Note: if you try to use the full wiki bin you'll need about 128GB of RAM...
-
-``` bash
-finalfusion quantize -f fasttext -q opq <fasttext.bin> fasttext.fifu.opq
-```
-
-#### Install deps and build
-
-``` bash
-poetry shell
-cd core
-poetry install
-cd ../api
-poetry install
-exit
-```
-
-#### Run
-
-```bash
-poetry run python -c "from ff_fasttext import FfModel; FfModel('test_data/wiki.en.fifu').eval('Hello')"
+make run
 ```
 
 ### Algorithm
