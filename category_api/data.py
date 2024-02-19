@@ -1,9 +1,12 @@
-from contextlib import contextmanager, ExitStack
-import boto3
 import tempfile
+from contextlib import ExitStack, contextmanager
 from urllib.parse import urlparse
 
-from .logger import logger
+import boto3
+
+from .logger import setup_logging
+
+logger = setup_logging()
 
 RETRIEVABLE_FILE_KEYS = [
     # is bonn setting, key
@@ -12,9 +15,12 @@ RETRIEVABLE_FILE_KEYS = [
     (True, "TAXONOMY_LOCATION"),
 ]
 
+
 @contextmanager
 def _make_temporary_files(settings, settings_bonn):
     url = urlparse(settings.CACHE_S3_BUCKET)
+    logger.info(event=f"S3 bucket for cache setup up to: {url}")
+
     s3 = boto3.client("s3")
     temporary_files = []
     with ExitStack() as stack:
@@ -31,7 +37,9 @@ def _make_temporary_files(settings, settings_bonn):
                 logger.info(event=f"retrieved cached file ({key}: {filename})")
                 temporary_files.append((is_bonn, key, temporary_file))
             else:
-                logger.warn(event=f"used local path rather than cached file ({key}: {filename})")
+                logger.info(
+                    event=f"used local path rather than cached file ({key}: {filename})"
+                )
         yield temporary_files
 
 

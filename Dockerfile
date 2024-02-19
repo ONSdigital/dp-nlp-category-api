@@ -9,7 +9,7 @@ RUN maturin build
 
 ## STAGE 2 - API
 
-FROM python:3.9
+FROM python:3.10
 
 # Use the build argument within the Dockerfile
 
@@ -28,6 +28,7 @@ WORKDIR /app
 COPY .env /app/
 COPY pyproject.toml /app
 COPY poetry.lock /app
+COPY gunicorn_config.py /app
 
 COPY category_api /app/category_api
 COPY test_data /app/test_data

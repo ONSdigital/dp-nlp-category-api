@@ -1,16 +1,23 @@
-from fastapi import FastAPI
-from category_api.settings import settings, get_bonn_settings
+import importlib.util
 from contextlib import asynccontextmanager
-from category_api.healthcheck import Healthcheck
+
 import bonn
 from bonn.extract import CategoryManager
-import importlib.util
-from .logger import logger
+from fastapi import FastAPI
+
+from category_api.healthcheck import Healthcheck
+from category_api.logger import setup_logging
+from category_api.settings import get_bonn_settings, settings
+
 from .data import retrieve
+
+logger = setup_logging()
+
 
 class Controllers:
     category_manager: CategoryManager
     healthcheck: Healthcheck
+
 
 def make_app(controllers, settings, settings_bonn):
     app = FastAPI(lifespan=lifespan)
@@ -25,14 +32,18 @@ def make_app(controllers, settings, settings_bonn):
 
     return app
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.controllers.healthcheck = Healthcheck(status="OK", checks=[])
     with retrieve(app.settings, app.settings_bonn) as (settings, settings_bonn):
         app.settings = settings
         app.settings_bonn = settings_bonn
-        app.controllers.category_manager = bonn.extract.load(app.settings.FIFU_FILE, app.settings_bonn)
+        app.controllers.category_manager = bonn.extract.load(
+            app.settings.FIFU_FILE, app.settings_bonn
+        )
         yield
+
 
 def create_app():
     logger.info(event="successfully loaded category manager")

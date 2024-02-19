@@ -1,7 +1,8 @@
-from category_api.settings import settings
 import sys
 import time
 from datetime import datetime
+
+from category_api.settings import settings
 
 # Define the check statuses
 OK = "OK"
@@ -15,7 +16,7 @@ class Healthcheck:
 
         build_time = datetime.now()
 
-        self.start_time = formatted_start_time.strftime('%Y-%m-%dT%H:%M:%S%z')
+        self.start_time = formatted_start_time.strftime("%Y-%m-%dT%H:%M:%S%z")
 
         self.status = status
         self.version = {

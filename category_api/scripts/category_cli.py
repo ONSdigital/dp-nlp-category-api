@@ -1,16 +1,23 @@
+import traceback
+
 import click
 from bonn.extract import load
+
+from category_api.logger import setup_logging
 from category_api.settings import settings
 
-from category_api.logger import logger
+logger = setup_logging()
+
 
 @click.command()
 def main():
     try:
         category_manager = load(settings.FIFU_FILE)
         logger.info(event="Category manager loaded successfully")
-    except Exception as e:
-        logger.error(event="Failed to load category manager", error=str(e), severity=1)
+    except Exception:
+        logger.error(
+            event="Failed to load category manager", error=traceback.format_exception()
+        )
         return
 
     word = None
@@ -23,15 +30,16 @@ def main():
             ][:5]
             logger.info(
                 event="Categories found for that specific word",
-                word=word,
-                categories_found=categories,
+                data={
+                    "word": word,
+                    "categories_found": categories,
+                },
             )
             print("\n".join(categories))
-        except Exception as e:
+        except Exception:
             logger.error(
                 event="Failed to get categories for input",
-                word=word,
-                error=str(e),
-                severity=1,
+                data=word,
+                error=traceback.format_exception(),
             )
             continue

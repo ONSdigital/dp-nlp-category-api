@@ -31,10 +31,11 @@ pydantic = "^1.9.0"
 uvicorn = "^0.17.4"
 dynaconf = "^3.1.7"
 urllib3 = "^1.26"
-structlog = "^21.5"
+structlog = "^23.3.0"
 requests = "^2.28.2"
 ruff = "^0.0.264"
 boto3 = "^1.26.165"
+json-log-formatter = "^0.5.2"
 
 
 [tool.poetry.scripts]
