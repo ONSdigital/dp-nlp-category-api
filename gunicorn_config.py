@@ -20,6 +20,12 @@ class JsonRequestFormatter(json_log_formatter.JSONFormatter):
         severity = (
             3 if record.levelname == "INFO" else 1 if record.levelname == "ERROR" else 0
         )
+        url = record.args[2]
+        if "?" in url:
+            path, query = url.split("?", 1)
+        else:
+            path = url
+            query = ""
 
         return dict(
             namespace=settings.NAMESPACE,
@@ -27,10 +33,11 @@ class JsonRequestFormatter(json_log_formatter.JSONFormatter):
             event="making request",
             data={
                 "remote_ip": record.args[0],
-                "method": record.args[1],
-                "path": f'{settings.HOST}:{settings.PORT}{record.args[2]}',
-                "status": str(record.args[4]),
             },
+            method=record.args[1],
+            path=path,
+            query=query,
+            status=int(record.args[4]),
             severity=severity,
         )
 
@@ -51,7 +58,14 @@ class JsonErrorFormatter(json_log_formatter.JSONFormatter):
         #       bf41c57913a92a9b556d9fc0e3165e97daa38f8e/json_log_formatter/__init__.py#L123)
         payload["created_at"] = payload["time"].isoformat(timespec="milliseconds") + "Z"
         payload["event"] = record.getMessage()
-        payload["level"] = record.levelname
+        payload["errors"] = [
+            {
+                "message": record.getMessage(),
+                "data": {
+                    "level": record.levelname
+                }
+            }
+        ]
         payload["severity"] = 3 if record.levelname == "INFO" else 1 if record.levelname == "ERROR" else 0
         payload.pop('taskName', None)
         payload.pop('color_message', None)
