@@ -31,14 +31,14 @@ def get_category(cat: str, query: str):
                 "scoring": scoring["tags"],
             },
         )
-    except Exception:
+    except Exception as exc:
         logger.error(
             event="category testing failed",
             data={
                 "query": query,
                 "category": cat,
             },
-            error=traceback.format_exception(),
+            error=traceback.format_exception(exc),
         )
         return {
             "message": "Internal Server Error",
@@ -83,15 +83,15 @@ def get_categories(query: str, snr: Optional[float] = 1.275):
             categories = filter_by_snr(categories, snr)
             logger.info(event="successfully filtered categories by SNR", data={snr})
 
-    except Exception:
-        traceback.format_exception()
+    except Exception as exc:
+        traceback.format_exception(exc)
         logger.error(
             event="testing and filtration of categories failed",
             data={
                 "query": query,
                 "snr": snr,
             },
-            error=traceback.format_exception(),
+            error=traceback.format_exception(exc),
         )
         return {
             "message": "Internal Server Error",
