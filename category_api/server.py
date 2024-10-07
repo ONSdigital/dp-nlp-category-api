@@ -10,8 +10,11 @@ from category_api.healthcheck import Healthcheck
 from category_api.logger import setup_logging
 from category_api.settings import get_bonn_settings, settings
 
-logger = setup_logging()
+import nltk
+nltk.download('stopwords')
+nltk.download('wordnet')
 
+logger = setup_logging()
 
 class Controllers:
     category_manager: CategoryManager
