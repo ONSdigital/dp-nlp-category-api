@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.11
 
 RUN mkdir test_data
 COPY test_data test_data/

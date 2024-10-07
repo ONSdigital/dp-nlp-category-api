@@ -9,7 +9,7 @@ RUN maturin build
 
 ## STAGE 2 - API
 
-FROM python:3.10
+FROM python:3.11
 
 # Use the build argument within the Dockerfile
 
