@@ -20,7 +20,7 @@ packages = [
 
 # For installable server
 [tool.poetry.dependencies]
-python = ">=3.11,<4"
+python = ">=3.10,<4"
 # category - poetry can not currently recognise a local maturin project as Python
 # category = {path="../core", develop=false}
 bonn = "1.0.7"
@@ -36,7 +36,7 @@ requests = "^2.28.2"
 ruff = "^0.0.264"
 boto3 = "^1.26.165"
 json-log-formatter = "^0.5.2"
-gunicorn = "^22.0.0"
+gunicorn = "^23.0.0"
 pip = ">=23.3"
 
 
