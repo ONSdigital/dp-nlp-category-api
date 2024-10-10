@@ -23,7 +23,7 @@ packages = [
 python = ">=3.11,<4"
 # category - poetry can not currently recognise a local maturin project as Python
 # category = {path="../core", develop=false}
-bonn = "1.0.7"
+bonn = "0.1.5"
 click = "^8.0.3"
 httpx = "^0.24.0"
 fastapi = "^0.110.0"

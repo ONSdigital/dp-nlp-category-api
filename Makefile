@@ -36,7 +36,7 @@ check-files:
 	@if [ ! -f ./${CATEGORY_API_FIFU_FILE} ]; then echo "No fifu file present"; exit 1; fi;
 
 check-lock: deps ## Checks lockfile
-	poetry lock --check
+	poetry check --lock
 
 audit: deps check-lock ## Audits code for vulnerable dependencies
 	poetry run safety check
