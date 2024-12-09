@@ -53,8 +53,8 @@ A Python microservice to wrap the Bonn package to match queries on the ONS Websi
 
 ### Dependencies
 
-    Poetry >= 1.4.1
-    Python >= 3.10
+    Poetry >= 1.6.0
+    Python >= 3.11
 
 If you are failing to compile and the error message is something like `do you have cargo in your PATH?` this is because it's trying to compile the underlying package `bonn-py` which is written in Rust. There is no requirement to compile the source package. This is because your machine doesn't match a [pre-built distribution](https://pypi.org/project/bonn/#files). You'll need to check your OS, OS version, processor and python version. You can use `poetry env info` to see what poetry is using and `poetry env use <python_path>` to update it if necessary.
 
