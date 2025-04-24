@@ -26,7 +26,7 @@ ifneq (,$(wildcard ./.env))
 	export
 endif
 
-.PHONY: all audit build build-bin delimiter deps fmt lint model run-container run test test-component test-unit help
+.PHONY: all audit audit-fix build build-bin delimiter deps fmt lint model run-container run test test-component test-unit help
 
 all: delimiter-AUDIT audit delimiter-LINTERS lint delimiter-UNIT-TESTS test-unit delimiter-COMPONENT_TESTS test-component delimiter-FINISH ## Runs multiple targets, audit, lint, test and test-component
 
@@ -35,11 +35,11 @@ check-files:
 	@if [ ! -f ./${BONN_TAXONOMY_LOCATION} ]; then echo "No taxonomy file present"; exit 1; fi;
 	@if [ ! -f ./${CATEGORY_API_FIFU_FILE} ]; then echo "No fifu file present"; exit 1; fi;
 
-check-lock: deps ## Checks lockfile
-	poetry check --lock
+audit: deps ## Audits code for vulnerable dependencies
+	poetry run pip-audit
 
-audit: deps check-lock ## Audits code for vulnerable dependencies
-	poetry run safety check
+audit-fix: deps ## Audits code for vulnerable dependencies and upgrades
+	poetry run pip-audit --fix
 
 build: ## Builds docker image - name: category_api:latest
 	docker build -t category_api:latest .
