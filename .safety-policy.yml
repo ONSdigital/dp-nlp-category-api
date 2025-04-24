@@ -1,9 +1,0 @@
-# Safety Security and License Configuration file
-security: # configuration for the `safety check` command
-    ignore-vulnerabilities: 
-        74735:
-            reason: Doesn't affect us as jinja template file name are not controllable.
-security-updates: # configuration for the `safety check --apply-security-updates` command
-    auto-security-updates-limit:
-        # A list of allowed values: major, minor, patch
-        - minor
