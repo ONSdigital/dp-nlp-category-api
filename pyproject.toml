@@ -32,7 +32,7 @@ uvicorn = "^0.34.2"
 dynaconf = "^3.1.7"
 urllib3 = "^1.26"
 structlog = "^23.3.0"
-requests = "^2.28.2"
+requests = "^2.32.4"
 ruff = "^0.0.264"
 boto3 = "^1.26.165"
 json-log-formatter = "^0.5.2"
@@ -52,6 +52,8 @@ ruff = "^0.0.264"
 [tool.poetry.group.dev.dependencies]
 pytest-asyncio = "^0.21.0"
 pip-audit = "^2.9.0"
+# Overriding sub-dependency of pip-audit
+setuptools = "^78.1.1"
 
 [build-system]
 requires = ["poetry-core>=1.6.0"]
