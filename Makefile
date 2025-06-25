@@ -21,6 +21,8 @@ export CATEGORY_API_START_TIME = $(shell date +%s)
 export CATEGORY_API_GIT_COMMIT ?= $(shell git rev-parse HEAD)
 export CATEGORY_API_VERSION ?= $(shell git tag --points-at HEAD | grep ^v | head -n 1)
 
+IGNORED=$(shell awk '{print "--ignore-vuln "$$1}' .audit-ignore)
+
 ifneq (,$(wildcard ./.env))
 	include .env
 	export
@@ -36,7 +38,7 @@ check-files:
 	@if [ ! -f ./${CATEGORY_API_FIFU_FILE} ]; then echo "No fifu file present"; exit 1; fi;
 
 audit: deps ## Audits code for vulnerable dependencies
-	poetry run pip-audit
+	poetry run pip-audit $(IGNORED)
 
 audit-fix: deps ## Audits code for vulnerable dependencies and upgrades
 	poetry run pip-audit --fix

@@ -1,0 +1,2 @@
+GHSA-48p4-8xcf-vxj5 # Ignored as we do not rely on urllib3 to control the number of redirects for an HTTP request in a Pyodide runtime.
+GHSA-pq67-6m6q-mj2v # botocore users not affected
